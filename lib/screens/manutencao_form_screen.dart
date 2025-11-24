@@ -1,5 +1,6 @@
 // lib/screens/manutencao_form_screen.dart
 
+import 'package:car_costs/core/currency_input_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -125,7 +126,8 @@ class _ManutencaoFormScreenState extends State<ManutencaoFormScreen> {
               // Valor
               TextFormField(
                 controller: _valorController,
-                keyboardType: TextInputType.number,
+                keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
+                inputFormatters: [CurrencyInputFormatterFreeEdit(decimalPrecision: 2)],
                 decoration: const InputDecoration(
                   labelText: 'Valor Total (R\$)',
                   prefixText: 'R\$ ',

@@ -1,5 +1,6 @@
 // lib/screens/veiculo_detail_screen.dart
 
+import 'package:car_costs/core/currency_input_format.dart';
 import 'package:car_costs/repositories/configuracao_repository.dart';
 import 'package:car_costs/screens/configuracao_dialog.dart';
 import 'package:car_costs/screens/relatorio_screen.dart';
@@ -296,7 +297,7 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
 
         // --- CÁLCULO DE ESTIMATIVA DO NÍVEL ATUAL ---
         double nivelEstimadoLitros = currentVeiculo.litrosNoTanque;
-        
+
         if (currentVeiculo.mediaManual > 0 &&
             currentVeiculo.kmAtual > currentVeiculo.kmUltimoNivel) {
           final kmRodada =
@@ -310,8 +311,10 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
         }
 
         // --- NOVO: CÁLCULO DA AUTONOMIA ---
-        double autonomiaUltimaMedia = nivelEstimadoLitros * currentVeiculo.mediaManual;
-        double autonomiaLongoPrazo = nivelEstimadoLitros * currentVeiculo.mediaLongPrazo;
+        double autonomiaUltimaMedia =
+            nivelEstimadoLitros * currentVeiculo.mediaManual;
+        double autonomiaLongoPrazo =
+            nivelEstimadoLitros * currentVeiculo.mediaLongPrazo;
         // ----------------------------------
 
         double nivelPercentual =
@@ -376,7 +379,10 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
                         const SizedBox(width: 8),
                         Text(
                           'Última Média: ${currentVeiculo.mediaManual.toStringAsFixed(2)} km/l',
-                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ],
                     ),
@@ -402,33 +408,44 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
                             const SizedBox(width: 8),
                             Text(
                               'Média Longo Prazo: ${currentVeiculo.mediaLongPrazo.toStringAsFixed(2)} km/l',
-                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ],
                         ),
                         IconButton(
-                      icon: const Icon(Icons.settings, size: 20, color: Colors.purple),
-                      tooltip: 'Configurar Média Longo Prazo (N)',
-                      onPressed: () async { 
-                        await showDialog( 
-                          context: context, 
-                          builder: (ctx) => const ConfiguracaoDialog()
-                        );
-                        if (context.mounted) {
-                          context.read<AbastecimentoBloc>().add(LoadAbastecimentos(currentVeiculo.id!));   
-                        }
-                        
-                      },
-                    ),
+                          icon: const Icon(
+                            Icons.settings,
+                            size: 20,
+                            color: Colors.purple,
+                          ),
+                          tooltip: 'Configurar Média Longo Prazo (N)',
+                          onPressed: () async {
+                            await showDialog(
+                              context: context,
+                              builder: (ctx) => const ConfiguracaoDialog(),
+                            );
+                            if (context.mounted) {
+                              context.read<AbastecimentoBloc>().add(
+                                LoadAbastecimentos(currentVeiculo.id!),
+                              );
+                            }
+                          },
+                        ),
                       ],
                     ),
                     // NOVO: AUTONOMIA COM MÉDIA LONGO PRAZO
                     Text(
                       'Autonomia: ${autonomiaLongoPrazo.toStringAsFixed(0)} km',
-                      style: const TextStyle(fontSize: 16, color: Colors.purple),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.purple,
+                      ),
                     ),
+
                     // BOTÃO DE CONFIGURAÇÃO (existente)
-                    
                   ],
                 ),
 
@@ -529,8 +546,6 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
                     Text(
                       a.mediaCalculada != null
                           ? 'Média: ${a.mediaCalculada!.toStringAsFixed(2)} km/l'
-                          : a.tanqueCheio
-                          ? 'Sem dados para calculo de média'
                           : '',
                       style: TextStyle(
                         fontSize: 12,
@@ -570,121 +585,155 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
   // -----------------------------------------------------------------
   // lib/screens/veiculo_detail_screen.dart (DENTRO do método _showKmEditDialog)
 
-void _showKmEditDialog(BuildContext context, Veiculo veiculo) {
-  final kmController = TextEditingController(text: veiculo.kmAtual.toString());
-  final kmRodadaController = TextEditingController(); // NOVO: Campo para KM Rodada
+  void _showKmEditDialog(BuildContext context, Veiculo veiculo) {
+    final kmController = TextEditingController(
+      text: veiculo.kmAtual.toString(),
+    );
+    final kmRodadaController =
+        TextEditingController(); // NOVO: Campo para KM Rodada
 
-  showDialog(
-    context: context,
-    builder: (ctx) {
-      return StatefulBuilder( // Necessário para atualizar o campo KM Atual ao somar
-        builder: (context, setStateSB) {
-          
-          // Função auxiliar para somar N km ao KM Atual salvo
-          void somarKms() {
-            final kmRodada = int.tryParse(kmRodadaController.text);
-            if (kmRodada != null && kmRodada > 0) {
-              setStateSB(() { // Atualiza o estado do diálogo
-                // Soma a KM Rodada à KM Atual do Veículo
-                final novaKm = veiculo.kmAtual + kmRodada;
-                kmController.text = novaKm.toString();
-                // Limpa o campo de rodada
-                kmRodadaController.clear();
-              });
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return StatefulBuilder(
+          // Necessário para atualizar o campo KM Atual ao somar
+          builder: (context, setStateSB) {
+            // Função auxiliar para somar N km ao KM Atual salvo
+            void somarKms() {
+              final kmRodada = int.tryParse(kmRodadaController.text);
+              if (kmRodada != null && kmRodada > 0) {
+                setStateSB(() {
+                  // Atualiza o estado do diálogo
+                  // Soma a KM Rodada à KM Atual do Veículo
+                  final novaKm = veiculo.kmAtual + kmRodada;
+                  kmController.text = novaKm.toString();
+                  // Limpa o campo de rodada
+                  kmRodadaController.clear();
+                });
+              }
             }
-          }
 
-          return AlertDialog(
-            title: const Text('Ajustar KM Atual'),
-            content: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('KM Atual Registrada:', style: TextStyle(fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 10),
-                  // KM Atual (Exibição e Edição Principal)
-                  TextFormField(
-                    controller: kmController,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      labelText: 'KM Total Atual (Valor Final)',
+            return AlertDialog(
+              title: const Text('Ajustar KM Atual'),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'KM Atual Registrada:',
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                  ),
-                  const SizedBox(height: 20),
+                    const SizedBox(height: 10),
+                    // KM Atual (Exibição e Edição Principal)
+                    TextFormField(
+                      controller: kmController,
+                      keyboardType: TextInputType.numberWithOptions(
+                        decimal: true,
+                        signed: false,
+                      ),
+                      inputFormatters: [
+                        CurrencyInputFormatterFreeEdit(decimalPrecision: 2),
+                      ],
+                      decoration: const InputDecoration(
+                        labelText: 'KM Total Atual (Valor Final)',
+                      ),
+                    ),
+                    const SizedBox(height: 20),
 
-                  // NOVO: KM Rodada (para soma)
-                  const Text('Adicionar KM Rodada (Odômetro Parcial):', style: TextStyle(fontWeight: FontWeight.bold)),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextFormField(
-                          controller: kmRodadaController,
-                          keyboardType: TextInputType.number,
-                          decoration: const InputDecoration(
-                            labelText: 'KM Rodada (N)',
+                    // NOVO: KM Rodada (para soma)
+                    const Text(
+                      'Adicionar KM Rodada (Odômetro Parcial):',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            controller: kmRodadaController,
+                            keyboardType: TextInputType.numberWithOptions(
+                              decimal: true,
+                              signed: false,
+                            ),
+                            inputFormatters: [
+                              CurrencyInputFormatterFreeEdit(
+                                decimalPrecision: 2,
+                              ),
+                            ],
+                            decoration: const InputDecoration(
+                              labelText: 'KM Rodada (N)',
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 10),
-                      // BOTÃO DE ADIÇÃO (SOMA)
-                      ElevatedButton.icon(
-                        onPressed: somarKms,
-                        icon: const Icon(Icons.add, size: 16),
-                        label: const Text('Somar'),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  const Text('Use "Somar" para adicionar a KM Rodada à KM Total.', style: TextStyle(fontSize: 12)),
-                ],
+                        const SizedBox(width: 10),
+                        // BOTÃO DE ADIÇÃO (SOMA)
+                        ElevatedButton.icon(
+                          onPressed: somarKms,
+                          icon: const Icon(Icons.add, size: 16),
+                          label: const Text('Somar'),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    const Text(
+                      'Use "Somar" para adicionar a KM Rodada à KM Total.',
+                      style: TextStyle(fontSize: 12),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            actions: [
-              // ... (Botões Cancelar e Salvar KM existentes)
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(),
-                child: const Text('Cancelar'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  final novaKm = int.tryParse(kmController.text);
-                  
-                  // ... (Validação e Salvar Lógica existente)
-                  if (novaKm == null || novaKm < veiculo.kmAtual) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('KM inválida ou menor que a anterior.')),
+              actions: [
+                // ... (Botões Cancelar e Salvar KM existentes)
+                TextButton(
+                  onPressed: () => Navigator.of(ctx).pop(),
+                  child: const Text('Cancelar'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    final novaKm = int.tryParse(kmController.text);
+
+                    // ... (Validação e Salvar Lógica existente)
+                    if (novaKm == null || novaKm < veiculo.kmAtual) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('KM inválida ou menor que a anterior.'),
+                        ),
+                      );
+                      return;
+                    }
+
+                    // Salvar lógica (mantida)
+                    final veiculoAtualizado = Veiculo(
+                      id: veiculo.id,
+                      nome: veiculo.nome,
+                      marca: veiculo.marca,
+                      ano: veiculo.ano,
+                      capacidadeTanqueLitros: veiculo.capacidadeTanqueLitros,
+                      mediaManual: veiculo.mediaManual,
+
+                      kmAtual: novaKm,
+
+                      kmUltimoNivel: veiculo.kmUltimoNivel,
+                      litrosNoTanque: veiculo.litrosNoTanque,
                     );
-                    return;
-                  }
 
-                  // Salvar lógica (mantida)
-                  final veiculoAtualizado = Veiculo(
-                    id: veiculo.id,
-                    nome: veiculo.nome,
-                    marca: veiculo.marca,
-                    ano: veiculo.ano,
-                    capacidadeTanqueLitros: veiculo.capacidadeTanqueLitros,                    
-                    mediaManual: veiculo.mediaManual,
-                    
-                    kmAtual: novaKm, 
-                    
-                    kmUltimoNivel: veiculo.kmUltimoNivel,
-                    litrosNoTanque: veiculo.litrosNoTanque, 
-                  );
-
-                  context.read<VeiculoBloc>().add(UpdateVeiculo(veiculoAtualizado, veiculo.combustivelIdsAceitos));
-                  Navigator.of(ctx).pop();
-                },
-                child: const Text('Salvar KM'),
-              ),
-            ],
-          );
-        },
-      );
-    },
-  );
-}
+                    context.read<VeiculoBloc>().add(
+                      UpdateVeiculo(
+                        veiculoAtualizado,
+                        veiculo.combustivelIdsAceitos,
+                      ),
+                    );
+                    Navigator.of(ctx).pop();
+                  },
+                  child: const Text('Salvar KM'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
 
   // -----------------------------------------------------------------
   // Diálogo para CALIBRAÇÃO MANUAL DO NÍVEL

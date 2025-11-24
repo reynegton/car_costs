@@ -1,5 +1,6 @@
 // lib/screens/veiculo_form_screen.dart
 
+import 'package:car_costs/core/currency_input_format.dart';
 import 'package:car_costs/models/combustivel.dart';
 import 'package:car_costs/repositories/combustivel_repository.dart';
 import 'package:flutter/material.dart';
@@ -168,7 +169,8 @@ class _VeiculoFormScreenState extends State<VeiculoFormScreen> {
               // KM Atual
               TextFormField(
                 controller: _kmAtualController,
-                keyboardType: TextInputType.number,
+                keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
+                inputFormatters: [CurrencyInputFormatterFreeEdit(decimalPrecision: 2)],
                 decoration: const InputDecoration(
                   labelText: 'Quilometragem Atual',
                 ),
@@ -179,7 +181,8 @@ class _VeiculoFormScreenState extends State<VeiculoFormScreen> {
               // Média Manual (Opcional no cadastro)
               TextFormField(
                 controller: _mediaManualController,
-                keyboardType: TextInputType.number,
+                keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
+                inputFormatters: [CurrencyInputFormatterFreeEdit(decimalPrecision: 2)],
                 decoration: const InputDecoration(
                   labelText: 'Média Manual Inicial (Opcional)',
                 ),

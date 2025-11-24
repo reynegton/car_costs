@@ -11,7 +11,7 @@ const String _databaseName = "fuel_manager.db";
 
 // RESETANDO PARA A VERSÃO 1:
 // Todas as tabelas e colunas agora são criadas no _onCreate.
-const int _databaseVersion = 1; 
+const int _databaseVersion = 2;
 
 class DatabaseHelper {
   // ----------------------------------------------------
@@ -92,19 +92,20 @@ class DatabaseHelper {
         descricao TEXT
       )
     ''');
-    
+
     // Tabela de Configurações (V7 consolidada)
     await db.execute('''
       CREATE TABLE Configuracoes(
         id INTEGER PRIMARY KEY,
         mediaApuracaoN INTEGER,
         veiculoIdSelecionado INTEGER NULL,
-        ultimoCombustivelId INTEGER NULL
+        ultimoCombustivelId INTEGER NULL,
+        encheuTanqueUltimoAbastecimento INTEGER DEFAULT 0
       )
     ''');
     // Insere o valor padrão (N=3) e demais defaults
     await db.insert('Configuracoes', {'id': 1, 'mediaApuracaoN': 3});
-    
+
     // Tabela de Tipos de Combustível (V6 consolidada)
     await db.execute('''
       CREATE TABLE Combustiveis(
@@ -124,13 +125,19 @@ class DatabaseHelper {
 
     // O construtor do CombustivelRepository agora recebe o banco 'db'
     // Como ele não foi feito para receber 'db', vamos chamar a inicialização diretamente aqui:
-    final List<String> defaultCombustiveis = ['Etanol', 'Gasolina', 'Diesel', 'GNV'];
+    final List<String> defaultCombustiveis = [
+      'Etanol',
+      'Gasolina',
+      'Diesel',
+      'GNV',
+    ];
     for (var nome in defaultCombustiveis) {
       await db.insert('Combustiveis', {'nome': nome});
     }
 
-
-    debugPrint("Database Versão 1 Criada: Todas as tabelas e colunas consolidadas.");
+    debugPrint(
+      "Database Versão 1 Criada: Todas as tabelas e colunas consolidadas.",
+    );
   }
 
   // ----------------------------------------------------
@@ -141,14 +148,15 @@ class DatabaseHelper {
   void _onUpgrade(Database db, int oldVersion, int newVersion) async {
     debugPrint("Migrating DB from version $oldVersion to $newVersion...");
 
-    // Se no futuro você mudar algo, o código de migrate viria aqui:
-    /*
-    if (oldVersion < 2) { 
-        // Lógica da Versão 2
+    // MIGRATE para a Versão 2: Adiciona o campo do último tanque cheio
+    if (oldVersion < 2) {
+      await db.execute(
+        'ALTER TABLE Configuracoes ADD COLUMN encheuTanqueUltimoAbastecimento INTEGER DEFAULT 0;',
+      );
+      debugPrint(
+        "Migrate v2: Adicionada coluna 'encheuTanqueUltimoAbastecimento' em Configuracoes.",
+      );
     }
-    */
-    
-    // Por enquanto, está vazio, pois tudo está na V1.
     debugPrint("Migração concluída. Versão atual: $newVersion");
   }
 }

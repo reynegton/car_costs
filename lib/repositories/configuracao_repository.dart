@@ -93,4 +93,31 @@ class ConfiguracaoRepository {
     final config = await getConfiguracao();
     return config.ultimoCombustivelId;
   }
+
+  // ----------------------------------------------------
+  // U - UPDATE (Salvar se o último foi Tanque Cheio)
+  // ----------------------------------------------------
+  Future<void> setEncheuTanqueUltimoAbastecimento(bool isFullTank) async {
+    final db = await _dbHelper.database;
+    final config = await getConfiguracao(); 
+    
+    // Atualiza o valor no objeto
+    config.encheuTanqueUltimoAbastecimento = isFullTank;
+    
+    // Salva no banco (o toMap() cuida da conversão bool -> int)
+    await db.update(
+      _tableName,
+      config.toMap(),
+      where: 'id = ?',
+      whereArgs: [1],
+    );
+  }
+
+  // ----------------------------------------------------
+  // R - READ (Obter Estado do Tanque Cheio para a UI)
+  // ----------------------------------------------------
+  Future<bool> getEncheuTanqueUltimoAbastecimento() async {
+    final config = await getConfiguracao();
+    return config.encheuTanqueUltimoAbastecimento; 
+  }
 }

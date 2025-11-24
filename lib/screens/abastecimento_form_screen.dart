@@ -1,5 +1,7 @@
 // lib/screens/abastecimento_form_screen.dart
 
+import 'package:car_costs/core/currency_input_format.dart';
+import 'package:car_costs/repositories/configuracao_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -34,10 +36,12 @@ class _AbastecimentoFormScreenState extends State<AbastecimentoFormScreen> {
   late TextEditingController _valorTotalController;
   late TextEditingController _kmRodadaController;
 
-  // Estado Interno (Minimizado, controlado por setState)
+  // Estado Interno (Minimizado)
   late DateTime _dataAbastecimento;
   String? _tipoCombustivelSelecionado;
   bool _tanqueCheio = true;
+  // Semáforo para prevenir loops no cálculo 2 de 3
+  bool _inCalculo = false;
 
   @override
   void initState() {
@@ -59,17 +63,19 @@ class _AbastecimentoFormScreenState extends State<AbastecimentoFormScreen> {
       LoadCombustiveisData(widget.veiculo.id!),
     );
 
+    _loadInitialConfig();
+
     // Adiciona Listeners
-    _litrosController.addListener(_recalculateValues);
-    _valorPorLitroController.addListener(_recalculateValues);
-    _valorTotalController.addListener(_recalculateValues);
+    _litrosController.addListener(()=>_recalculateValues('litros'));
+    _valorPorLitroController.addListener(()=>_recalculateValues('litros'));
+    _valorTotalController.addListener(()=>_recalculateValues('valorTotal'));
   }
 
   @override
   void dispose() {
-    _litrosController.removeListener(_recalculateValues);
-    _valorPorLitroController.removeListener(_recalculateValues);
-    _valorTotalController.removeListener(_recalculateValues);
+    _litrosController.removeListener(()=>_recalculateValues('litros'));
+    _valorPorLitroController.removeListener(()=>_recalculateValues('litros'));
+    _valorTotalController.removeListener(()=>_recalculateValues('valorTotal'));
 
     _kmAtualController.dispose();
     _litrosController.dispose();
@@ -79,28 +85,17 @@ class _AbastecimentoFormScreenState extends State<AbastecimentoFormScreen> {
     super.dispose();
   }
 
-  // ----------------------------------------------------
-// NOVA FUNÇÃO: Sumariza KM Rodada no KM Atual
-// ----------------------------------------------------
-void _somarKmsRodada() {
-  final kmRodada = int.tryParse(_kmRodadaController.text);
-  
-  if (kmRodada != null && kmRodada > 0) {
-    // 1. Obtém o KM Atual BASE (última KM salva no veículo)
-    final kmBase = widget.veiculo.kmAtual;
+  void _loadInitialConfig() async {
+    final repo = ConfiguracaoRepository();
+    final isFullTank = await repo.getEncheuTanqueUltimoAbastecimento();
     
-    // 2. Soma e define o valor no campo KM Atual
-    final novaKm = kmBase + kmRodada;
-    
-    setState(() { // Usa setState local para atualizar o formulário
-        _kmAtualController.text = novaKm.toString();
-        _kmRodadaController.clear(); // Limpa o campo de rodada
+    // Atualiza o estado da tela (a única vez que o setState é usado para um estado global)
+    setState(() {
+      _tanqueCheio = isFullTank;
     });
-
   }
-}
 
-  // Função: Busca KM Atualizada (Sem setState, apenas atualiza controller)
+  // Função: Busca KM Atualizada (usando BLoC)
   void _loadCurrentKm() {
     final currentState = context.read<VeiculoBloc>().state;
 
@@ -109,7 +104,6 @@ void _somarKmsRodada() {
         final Veiculo veiculoAtualizado = currentState.veiculos.firstWhere(
           (v) => v.id == widget.veiculo.id,
         );
-        // Atualiza o controlador com a KM mais recente
         _kmAtualController.text = veiculoAtualizado.kmAtual.toString();
       } catch (_) {
         _kmAtualController.text = widget.veiculo.kmAtual.toString();
@@ -119,48 +113,79 @@ void _somarKmsRodada() {
     }
   }
 
-  // Lógica de Cálculo Flexível (2 de 3)
-  void _recalculateValues() {
-    if (!mounted) return;
+  // Função: Sumariza KM Rodada no KM Atual
+  void _somarKmsRodada() {
+    final kmRodada = int.tryParse(_kmRodadaController.text);
 
-    final litros =
-        double.tryParse(_litrosController.text.replaceAll(',', '.')) ?? 0.0;
-    final valorPL =
-        double.tryParse(_valorPorLitroController.text.replaceAll(',', '.')) ??
-        0.0;
-    final valorTotal =
-        double.tryParse(_valorTotalController.text.replaceAll(',', '.')) ?? 0.0;
+    if (kmRodada != null && kmRodada > 0) {
+      final kmBase = widget.veiculo.kmAtual;
+      final novaKm = kmBase + kmRodada;
 
-    bool needsUpdate = false;
-
-    // Cálculo: Litros e Valor PL -> Valor Total
-    if (litros > 0 && valorPL > 0 && valorTotal == 0) {
-      final novoValorTotal = litros * valorPL;
-      _valorTotalController.value = TextEditingValue(
-        text: novoValorTotal.toStringAsFixed(2),
-      );
-      needsUpdate = true;
+      setState(() {
+        _kmAtualController.text = novaKm.toString();
+        _kmRodadaController.clear();
+      });
     }
-    // Cálculo: Valor Total e Litros -> Valor por Litro
-    else if (valorTotal > 0 && litros > 0 && valorPL == 0) {
-      final novoValorPL = valorTotal / litros;
-      _valorPorLitroController.value = TextEditingValue(
-        text: novoValorPL.toStringAsFixed(2),
-      );
-      needsUpdate = true;
-    }
-    // Cálculo: Valor Total e Valor PL -> Litros
-    else if (valorTotal > 0 && valorPL > 0 && litros == 0) {
-      final novosLitros = valorTotal / valorPL;
-      _litrosController.value = TextEditingValue(
-        text: novosLitros.toStringAsFixed(3),
-      );
-      needsUpdate = true;
-    }
+  }
 
-    if (needsUpdate) {
-      // Manter setState local para a fluidez do cálculo 2 de 3
-      setState(() {});
+  // Lógica de Cálculo (Baseada em Valor por Litro Fixo)
+  void _recalculateValues(String origin) {
+    // 1. Testa o semáforo
+    if (!mounted || _inCalculo) return;
+
+    // 2. Acende o semáforo
+    _inCalculo = true;
+
+    try {
+      final litros =
+          double.tryParse(_litrosController.text.replaceAll(',', '.')) ?? 0.0;
+      final valorPL =
+          double.tryParse(_valorPorLitroController.text.replaceAll(',', '.')) ??
+          0.0;
+      final valorTotal =
+          double.tryParse(_valorTotalController.text.replaceAll(',', '.')) ??
+          0.0;
+
+      bool needsUpdate = false;
+      const double tolerance = 0.01;
+
+      // Só realiza cálculos se o Valor por Litro (a chave) estiver preenchido
+      if (valorPL > 0) {
+        if (origin == 'litros') {
+          if (litros > 0) {
+            final novoValorTotal = litros * valorPL;
+
+            // Se o Valor Total está vazio ou precisa de atualização
+            if (valorTotal == 0 ||
+                (valorTotal - novoValorTotal).abs() > tolerance) {
+              _valorTotalController.value = TextEditingValue(
+                text: novoValorTotal.toStringAsFixed(2),
+              );
+              needsUpdate = true;
+            }
+          }
+        }
+        if (origin == 'valorTotal') {
+          if (valorTotal > 0) {
+            final novosLitros = valorTotal / valorPL;
+
+            // Se Litros está vazio ou precisa de atualização
+            if (litros == 0 || (litros - novosLitros).abs() > 0.001) {
+              _litrosController.value = TextEditingValue(
+                text: novosLitros.toStringAsFixed(3),
+              );
+              needsUpdate = true;
+            }
+          }
+        }
+      }
+
+      if (needsUpdate) {
+        setState(() {});
+      }
+    } finally {
+      // 3. Desliga o semáforo
+      _inCalculo = false;
     }
   }
 
@@ -177,24 +202,7 @@ void _somarKmsRodada() {
         double.tryParse(_valorTotalController.text.replaceAll(',', '.')) ?? 0.0;
     final kmAtual = int.tryParse(_kmAtualController.text) ?? 0;
 
-    // Validação da regra 2 de 3
-    int filledFields = 0;
-    if (litros > 0) filledFields++;
-    if (valorPL > 0) filledFields++;
-    if (valorTotal > 0) filledFields++;
-
-    if (filledFields < 2) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Por favor, informe pelo menos 2 dos 3 campos de valor.',
-          ),
-        ),
-      );
-      return;
-    }
-
-    // Validação da KM
+    // Validação do KM
     if (kmAtual <= widget.veiculo.kmAtual) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -215,6 +223,14 @@ void _somarKmsRodada() {
       return;
     }
 
+    // Validação que ao menos Litros ou VTotal foi preenchido
+    if (litros <= 0 && valorTotal <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Preencha os Litros ou o Valor Total.')),
+      );
+      return;
+    }
+
     // Cria o objeto Abastecimento
     final novoAbastecimento = Abastecimento(
       veiculoId: widget.veiculo.id!,
@@ -222,7 +238,7 @@ void _somarKmsRodada() {
       tipoCombustivel: _tipoCombustivelSelecionado!,
       kmAtual: kmAtual,
       litrosAbastecidos: litros,
-      valorPorLitro: valorPL,
+      valorPorLitro: valorPL != 0.0 ? valorPL : valorTotal / litros,
       valorTotal: valorTotal,
       tanqueCheio: _tanqueCheio,
       mediaCalculada: null,
@@ -274,12 +290,13 @@ void _somarKmsRodada() {
               ),
               const Divider(),
 
-              // KM Atual
+              // KM Atual (Valor Final)
               TextFormField(
                 controller: _kmAtualController,
-                keyboardType: TextInputType.number,
+                keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
+                inputFormatters: [CurrencyInputFormatterFreeEdit(decimalPrecision: 2)],
                 decoration: const InputDecoration(
-                  labelText: 'KM Atual no Abastecimento',
+                  labelText: 'KM Atual no Abastecimento (Total)',
                   hintText: 'Obrigatório, deve ser maior que a última KM.',
                 ),
                 validator: (value) {
@@ -291,15 +308,17 @@ void _somarKmsRodada() {
                 },
               ),
               const SizedBox(height: 10),
-              // NOVO: KM Rodada (para soma)
+
+              // KM Rodada (para soma)
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Expanded(
                     child: TextFormField(
                       controller: _kmRodadaController,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
+                      keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
+                inputFormatters: [CurrencyInputFormatterFreeEdit(decimalPrecision: 2)],
+                      decoration: const InputDecoration(
                         labelText: 'KM Rodada (+N km)',
                         hintText: 'KM do hodômetro parcial (trip)',
                       ),
@@ -314,7 +333,10 @@ void _somarKmsRodada() {
                       icon: const Icon(Icons.add, size: 16),
                       label: const Text('Somar'),
                       style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 15,
+                        ),
                       ),
                     ),
                   ),
@@ -352,7 +374,7 @@ void _somarKmsRodada() {
               ),
               const Divider(),
 
-              // TIPO DE COMBUSTÍVEL (BlocBuilder NOVO)
+              // TIPO DE COMBUSTÍVEL (BlocBuilder)
               BlocBuilder<CombustivelBloc, CombustivelState>(
                 builder: (context, state) {
                   if (state is CombustivelLoading) {
@@ -360,7 +382,7 @@ void _somarKmsRodada() {
                   }
 
                   if (state is CombustivelLoaded) {
-                    // Define o valor inicial uma única vez (preferência ou primeiro)
+                    // Define o valor inicial uma única vez
                     if (_tipoCombustivelSelecionado == null) {
                       final ultimoId = state.ultimoCombustivelId;
                       final ultimoObj = state.combustiveisAceitos.firstWhere(
@@ -393,7 +415,6 @@ void _somarKmsRodada() {
                         );
                       }).toList(),
                       onChanged: (String? newValue) {
-                        // Usa setState local (apenas para o campo do formulário)
                         setState(() {
                           _tipoCombustivelSelecionado = newValue;
                         });
@@ -409,30 +430,38 @@ void _somarKmsRodada() {
               ),
               const SizedBox(height: 10),
 
-              // Litros Abastecidos
-              TextFormField(
-                controller: _litrosController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'Litros Abastecidos',
-                ),
-              ),
-              const SizedBox(height: 10),
-              // Valor por Litro
+              // VALOR POR LITRO (AGORA É CAMPO CHAVE E OBRIGATÓRIO)
               TextFormField(
                 controller: _valorPorLitroController,
-                keyboardType: TextInputType.number,
+                keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
+                inputFormatters: [CurrencyInputFormatterFreeEdit(decimalPrecision: 2)],
                 decoration: const InputDecoration(
                   labelText: 'Valor por Litro (R\$)',
+                  hintText: 'Obrigatório para o cálculo.',
                 ),
               ),
               const SizedBox(height: 10),
-              // Valor Total
+
+              // Litros Abastecidos (Calculável)
+              TextFormField(
+                controller: _litrosController,
+                keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
+                inputFormatters: [CurrencyInputFormatterFreeEdit(decimalPrecision: 2)],
+                decoration: const InputDecoration(
+                  labelText: 'Litros Abastecidos',
+                  hintText: 'Calculado se o Valor Total for informado.',
+                ),
+              ),
+              const SizedBox(height: 10),
+
+              // Valor Total (Calculável)
               TextFormField(
                 controller: _valorTotalController,
-                keyboardType: TextInputType.number,
+                keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
+                inputFormatters: [CurrencyInputFormatterFreeEdit(decimalPrecision: 2)],
                 decoration: const InputDecoration(
                   labelText: 'Valor Total (R\$)',
+                  hintText: 'Calculado se Litros for informado.',
                 ),
               ),
 

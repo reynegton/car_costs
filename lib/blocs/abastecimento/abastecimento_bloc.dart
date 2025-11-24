@@ -93,19 +93,12 @@ class AbastecimentoBloc extends Bloc<AbastecimentoEvent, AbastecimentoState> {
         );
       }
 
+      await _configuracaoRepository.setEncheuTanqueUltimoAbastecimento(
+        event.abastecimento.tanqueCheio, // Usa o valor que veio do formulário
+      );
+
       // 4. Recarregar a lista de abastecimentos
       add(LoadAbastecimentos(event.abastecimento.veiculoId));
-
-      // 5. IMPORTANTE: Notificar o VeiculoBloc que o veículo foi atualizado (KM e Média)
-      // Isso força o dashboard a atualizar a KM/Média no Card.
-      // NOTE: Isso requer acesso ao VeiculoBloc. Para simplificar AGORA,
-      // usaremos um hack temporário no Dashboard (BlocListener) ou garantimos
-      // que o VeiculoBloc seja recarregado globalmente.
-
-      // A forma mais limpa é emitir um estado para o VeiculoBloc,
-      // mas como ele não está diretamente no escopo do AbastecimentoBloc,
-      // a próxima atualização do VeiculoBloc que ocorrer na lista ou no Dashboard
-      // (quando ele for reaberto) buscará os dados corretos no banco.
     } catch (e) {
       emit(AbastecimentoError('Falha ao adicionar abastecimento: $e'));
     }
@@ -187,6 +180,9 @@ class AbastecimentoBloc extends Bloc<AbastecimentoEvent, AbastecimentoState> {
     if (kmRodada > 0 && totalLitros > 0) {
       // Média = KM Rodada / Litros
       double media = kmRodada / totalLitros;
+
+      // *** CORREÇÃO: ATUALIZAR mediaManual do Veículo ***
+      v.mediaManual = media;
 
       // Atualiza o campo mediaCalculada do último abastecimento de tanque cheio no BD
       ultimoCheio.mediaCalculada = media;

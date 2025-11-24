@@ -62,42 +62,44 @@ class FuelManagerApp extends StatelessWidget {
               CombustivelBloc(CombustivelRepository(), configuracaoRepository),
         ),
       ],
-      child: MaterialApp(
-        title: 'Fuel Manager',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          
-          // ----------------------------------------------------
-          // NOVO: CONFIGURAÇÃO GLOBAL DE TEXTFORMFIELD STYLE
-          // ----------------------------------------------------
-          inputDecorationTheme: InputDecorationTheme(
-            // 1. Define a borda padrão como OutlineInputBorder
-            border: const OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(8.0)), // Bordas arredondadas (opcional)
+      child: SafeArea(
+        child: MaterialApp(
+          title: 'Fuel Manager',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+            
+            // ----------------------------------------------------
+            // NOVO: CONFIGURAÇÃO GLOBAL DE TEXTFORMFIELD STYLE
+            // ----------------------------------------------------
+            inputDecorationTheme: InputDecorationTheme(
+              // 1. Define a borda padrão como OutlineInputBorder
+              border: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(8.0)), // Bordas arredondadas (opcional)
+              ),
+              
+              // 2. Define a borda quando o campo está habilitado (sem foco)
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+                borderSide: BorderSide(color: Colors.grey.shade400, width: 1.0),
+              ),
+              
+              // 3. Define a borda quando o campo está focado (digitando)
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+                borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2.0),
+              ),
+              
+              // 4. Se você usa prefixos/sufixos, ajuste o padding
+              contentPadding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 10.0),
+              
+              // 5. Ajuste para o texto do label (opcional)
+              labelStyle: TextStyle(color: Colors.grey.shade700),
             ),
-            
-            // 2. Define a borda quando o campo está habilitado (sem foco)
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
-              borderSide: BorderSide(color: Colors.grey.shade400, width: 1.0),
-            ),
-            
-            // 3. Define a borda quando o campo está focado (digitando)
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
-              borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2.0),
-            ),
-            
-            // 4. Se você usa prefixos/sufixos, ajuste o padding
-            contentPadding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 10.0),
-            
-            // 5. Ajuste para o texto do label (opcional)
-            labelStyle: TextStyle(color: Colors.grey.shade700),
+            // ----------------------------------------------------
           ),
-          // ----------------------------------------------------
+          home: const MainLoaderScreen(),
         ),
-        home: const MainLoaderScreen(),
       ),
     );
   }

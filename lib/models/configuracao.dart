@@ -4,13 +4,15 @@ class Configuracao {
   int id;
   int mediaApuracaoN;
   int? veiculoIdSelecionado;
-  int? ultimoCombustivelId; // NOVO: ID do último combustível usado
+  int? ultimoCombustivelId; 
+  bool encheuTanqueUltimoAbastecimento;
 
   Configuracao({
     this.id = 1,
     this.mediaApuracaoN = 3,
     this.veiculoIdSelecionado,
-    this.ultimoCombustivelId, // NOVO
+    this.ultimoCombustivelId, 
+    this.encheuTanqueUltimoAbastecimento = false,
   });
 
   Map<String, dynamic> toMap() {
@@ -18,7 +20,8 @@ class Configuracao {
       'id': id,
       'mediaApuracaoN': mediaApuracaoN,
       'veiculoIdSelecionado': veiculoIdSelecionado,
-      'ultimoCombustivelId': ultimoCombustivelId, // NOVO
+      'ultimoCombustivelId': ultimoCombustivelId, 
+      'encheuTanqueUltimoAbastecimento': encheuTanqueUltimoAbastecimento ? 1 : 0,
     };
   }
 
@@ -28,6 +31,7 @@ class Configuracao {
       mediaApuracaoN: map['mediaApuracaoN'],
       veiculoIdSelecionado: map['veiculoIdSelecionado'],
       ultimoCombustivelId: map['ultimoCombustivelId'],
+      encheuTanqueUltimoAbastecimento: map['encheuTanqueUltimoAbastecimento'] == 1,
     );
   }
 }
