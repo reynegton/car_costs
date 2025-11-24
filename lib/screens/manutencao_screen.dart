@@ -64,13 +64,7 @@ class ManutencaoScreen extends StatelessWidget {
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Exibição da Média (Existente)
-                      Text(
-                        'KM: ${veiculo.kmAtual}',
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(width: 8),
-                      // BOTÃO DE REMOÇÃO (NOVO)
+                      
                       IconButton(
                         icon: const Icon(
                           Icons.edit,

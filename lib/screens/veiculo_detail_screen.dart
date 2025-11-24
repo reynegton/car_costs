@@ -474,11 +474,61 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
                   ],
                 ),
                 const SizedBox(height: 5),
-                LinearProgressIndicator(
-                  value: nivelPercentual,
-                  backgroundColor: Colors.grey[300],
-                  color: nivelPercentual > 0.2 ? Colors.green : Colors.red,
-                  minHeight: 10,
+                // ----------------------------------------------------
+                // NOVO: MEDIDOR DE PROGRESSO COM MARCADORES VISUAIS
+                // ----------------------------------------------------
+                SizedBox(
+                  height: 20, // Altura para o indicador e os marcadores
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      // 1. O PRÓPRIO INDICADOR DE PROGRESSO
+                      LinearProgressIndicator(
+                        value: nivelPercentual,
+                        backgroundColor: Colors.grey[300],
+                        color: nivelPercentual > 0.2 ? Colors.green : Colors.red,
+                        minHeight: 10,
+                      ),
+
+                      // 2. LINHA DE MARCADORES (Ticks)
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          // Calcula a largura total do indicador para posicionar os marcadores
+                          final totalWidth = constraints.maxWidth;
+                          
+                          // Cria os marcadores de 1/4, 1/2, e 3/4
+                          return Row(
+                            children: [
+                              // Marcador de 1/4 (25% da largura)
+                              SizedBox(width: totalWidth * 0.25 - 1.5), 
+                              Container(width: 3, height: 10, color: Colors.black.withOpacity(0.5)),
+                              
+                              // Marcador de 1/2 (25% restante)
+                              SizedBox(width: totalWidth * 0.25 - 3),
+                              Container(width: 3, height: 10, color: Colors.black.withOpacity(0.5)),
+                              
+                              // Marcador de 3/4 (25% restante)
+                              SizedBox(width: totalWidth * 0.25 - 3),
+                              Container(width: 3, height: 10, color: Colors.black.withOpacity(0.5)),
+                              
+                              // O último SizedBox (25% restante) leva ao final (100%)
+                            ],
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                // Rótulos na Base (Opcional, mas altamente recomendado para clareza)
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(width: 0), // Posição 0%
+                    Text('1/4', style: TextStyle(fontSize: 10, color: Colors.grey)),
+                    Text('1/2', style: TextStyle(fontSize: 10, color: Colors.grey)),
+                    Text('3/4', style: TextStyle(fontSize: 10, color: Colors.grey)),
+                    SizedBox(width: 0), // Posição 100%
+                  ],
                 ),
               ],
             ),
@@ -757,7 +807,9 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
           builder: (context, setStateSB) {
             double litrosAjustados =
                 nivelAjustado * veiculo.capacidadeTanqueLitros;
-
+            final double sliderWidth =
+                MediaQuery.of(context).size.width *
+                0.7; // Estimar largura do slider
             return AlertDialog(
               title: const Text('Calibração Manual do Tanque'),
               content: SingleChildScrollView(
@@ -773,18 +825,100 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
                       'Nível Calibrado: ${litrosAjustados.toStringAsFixed(1)} L (${(nivelAjustado * 100).toStringAsFixed(0)}%)',
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    Slider(
-                      value: nivelAjustado,
-                      min: 0.0,
-                      max: 1.0,
-                      divisions: 100,
-                      label: (nivelAjustado * 100).toStringAsFixed(0),
-                      onChanged: (double value) {
-                        setStateSB(() {
-                          nivelAjustado = value;
-                        });
-                      },
+                    SizedBox(
+                      width: sliderWidth,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          // 1. Linha de Marcadores
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              // 0%
+                              const Icon(
+                                Icons.circle,
+                                size: 8,
+                                color: Colors.red,
+                              ),
+                              // 25%
+                              Container(
+                                width: 8,
+                                height: 8,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              // 50%
+                              Container(
+                                width: 8,
+                                height: 8,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              // 75%
+                              Container(
+                                width: 8,
+                                height: 8,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              // 100%
+                              const Icon(
+                                Icons.circle,
+                                size: 8,
+                                color: Colors.green,
+                              ),
+                            ],
+                          ),
+
+                          // 2. O Slider, SEM DIVISÕES, por cima
+                          SliderTheme(
+                            data: SliderTheme.of(context).copyWith(
+                              // O thumb/círculo é mais visível
+                              thumbShape: const RoundSliderThumbShape(
+                                enabledThumbRadius: 10.0,
+                              ),
+                              // Garante que o slider não tem a linha de ticks por cima
+                              tickMarkShape: const RoundSliderTickMarkShape(),
+                              showValueIndicator: ShowValueIndicator.always,
+                            ),
+                            child: Slider(
+                              value: nivelAjustado,
+                              min: 0.0,
+                              max: 1.0,
+                              // REMOVIDO: divisions: 4, --> permite ajuste fino
+
+                              // Usaremos a porcentagem como rótulo para refletir o ajuste fino
+                              label:
+                                  '${(nivelAjustado * 100).toStringAsFixed(0)}%',
+
+                              onChanged: (double value) {
+                                setStateSB(() {
+                                  nivelAjustado = value;
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
+                    const SizedBox(height: 5),
+                    const Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Vazio', style: TextStyle(fontSize: 12)),
+                        Text('1/4', style: TextStyle(fontSize: 12)),
+                        Text('1/2', style: TextStyle(fontSize: 12)),
+                        Text('3/4', style: TextStyle(fontSize: 12)),
+                        Text('Cheio', style: TextStyle(fontSize: 12)),
+                      ],
+                    ),
+                    // ----------------------------------------------------
                   ],
                 ),
               ),

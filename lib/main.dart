@@ -158,9 +158,22 @@ class FuelManagerApp extends StatelessWidget {
               elevation: 4,
             ),
 
-            // ----------------------------------------------------
-            // NOVO: CONFIGURAÇÃO GLOBAL DE TEXTFORMFIELD STYLE
-            // ----------------------------------------------------
+            sliderTheme: SliderThemeData(
+              // Cor do 'thumb' (o controle redondo)
+              thumbColor: Colors.blueGrey,
+              
+              // Cor da linha ativa (a parte entre o início e o thumb)
+              activeTrackColor: Colors.blueGrey, 
+              
+              // Cor da linha inativa (a parte entre o thumb e o final)
+              inactiveTrackColor: Colors.blueGrey.shade300,
+              
+              // Cor do texto do 'label' (o valor que aparece quando arrasta, se habilitado)
+              valueIndicatorColor: Colors.blueGrey.shade700,
+              valueIndicatorTextStyle: const TextStyle(
+                color: Colors.white,
+              ),
+            ),
             inputDecorationTheme: InputDecorationTheme(
               // 1. Define a borda padrão como OutlineInputBorder
               border: const OutlineInputBorder(
