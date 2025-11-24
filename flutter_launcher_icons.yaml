@@ -1,0 +1,11 @@
+flutter_icons:
+  # O ícone está habilitado
+  android: "launcher_icon"
+  
+  # NOVO: Define a imagem que será usada
+  image_path: "assets/icon/app_icon.png"
+
+  # Opcional: Adaptação para ícones adaptativos do Android
+  # Se você usar um ícone com fundo transparente, use esta configuração:
+  adaptive_icon_background: "#1976D2" # Cor de fundo (Azul Primário do Material)
+  adaptive_icon_foreground: "assets/icon/app_icon_foreground.png" # Arquivo da parte transparente do ícone (carro + gráfico)
