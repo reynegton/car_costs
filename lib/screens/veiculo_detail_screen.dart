@@ -501,15 +501,15 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
                             children: [
                               // Marcador de 1/4 (25% da largura)
                               SizedBox(width: totalWidth * 0.25 - 1.5), 
-                              Container(width: 3, height: 10, color: Colors.black.withOpacity(0.5)),
+                              Container(width: 3, height: 10, color: Color.fromRGBO(0, 0, 0, 0.5)),
                               
                               // Marcador de 1/2 (25% restante)
                               SizedBox(width: totalWidth * 0.25 - 3),
-                              Container(width: 3, height: 10, color: Colors.black.withOpacity(0.5)),
+                              Container(width: 3, height: 10, color: Color.fromRGBO(0, 0, 0, 0.5)),
                               
                               // Marcador de 3/4 (25% restante)
                               SizedBox(width: totalWidth * 0.25 - 3),
-                              Container(width: 3, height: 10, color: Colors.black.withOpacity(0.5)),
+                              Container(width: 3, height: 10, color: Color.fromRGBO(0, 0, 0, 0.5)),
                               
                               // O último SizedBox (25% restante) leva ao final (100%)
                             ],
@@ -885,7 +885,7 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
                               ),
                               // Garante que o slider não tem a linha de ticks por cima
                               tickMarkShape: const RoundSliderTickMarkShape(),
-                              showValueIndicator: ShowValueIndicator.always,
+                              showValueIndicator: ShowValueIndicator.onDrag,
                             ),
                             child: Slider(
                               value: nivelAjustado,

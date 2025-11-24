@@ -16,6 +16,8 @@ import 'repositories/manutencao_repository.dart'; // Importar
 import 'blocs/veiculo/veiculo_bloc.dart';
 import 'blocs/abastecimento/abastecimento_bloc.dart';
 import 'blocs/manutencao/manutencao_bloc.dart'; // Importar
+import 'package:flutter_localizations/flutter_localizations.dart'; 
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -66,6 +68,21 @@ class FuelManagerApp extends StatelessWidget {
         child: MaterialApp(
           title: 'Fuel Manager',
           debugShowCheckedModeBanner: false,
+          // ----------------------------------------------------
+        // NOVO: CONFIGURAÇÃO DE LOCALIZAÇÃO (IDIOMA)
+        // ----------------------------------------------------
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        // Definimos o suporte apenas para o Português do Brasil
+        supportedLocales: const [
+          Locale('pt', 'BR'), 
+        ],
+        // Define o idioma padrão do app (se não conseguir determinar o do sistema)
+        locale: const Locale('pt', 'BR'), 
+        // ----------------------------------------------------
           theme: ThemeData(
             primarySwatch: Colors.blue,
             primaryColor: Colors.blueGrey,
@@ -79,6 +96,23 @@ class FuelManagerApp extends StatelessWidget {
               // Cor da linha de destaque da aba (indicator)
               indicatorColor: Colors.blueGrey,
             ),
+
+            colorScheme:
+                ColorScheme.fromSwatch(
+                  // Usa o azul como a cor principal do esquema
+                  primarySwatch: Colors.blueGrey,
+
+                  // Define a cor de destaque (seleção)
+                  accentColor: Colors.blueAccent,
+                ).copyWith(
+                  // Sobrescreve a cor de superfície e a cor principal para o DatePicker
+                  primary:
+                      Colors.blue.shade700, // Cor do cabeçalho (Azul Escuro)
+                  onPrimary: Colors.white, // Cor do texto/ícones no cabeçalho
+                  surface: Colors.white, // Cor de fundo do calendário
+                  onSurface: Colors.black, // Cor dos dias e texto
+                  secondary: Colors.blue, // Cor do círculo de seleção
+                ),
             switchTheme: SwitchThemeData(
               // Cor do polegar (thumb) quando ATIVO (ligado)
               thumbColor: WidgetStateProperty.resolveWith((states) {
@@ -101,8 +135,8 @@ class FuelManagerApp extends StatelessWidget {
             ),
             chipTheme: ChipThemeData(
               // Cor de fundo do chip (quando não selecionado)
-              backgroundColor: Colors.grey.shade200, 
-              
+              backgroundColor: Colors.grey.shade200,
+
               // Cor da borda
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8.0),
@@ -110,26 +144,25 @@ class FuelManagerApp extends StatelessWidget {
 
               // Cor do rótulo (texto)
               labelStyle: TextStyle(color: Colors.grey.shade800),
-              
+
               // Cor do background quando o chip está SELECIONADO (a mais importante)
-              selectedColor: Colors.blueGrey.shade200, 
+              selectedColor: Colors.blueGrey.shade200,
 
               // Cor do checkmark ou do ícone/texto quando SELECIONADO
-              checkmarkColor: Colors.blue.shade900, 
-              
+              checkmarkColor: Colors.blue.shade900,
+
               // Cor do rótulo quando SELECIONADO
               secondaryLabelStyle: const TextStyle(color: Colors.black),
-              
+
               // Cor do ícone quando selecionado
-              secondarySelectedColor: Colors.blue.shade900, 
+              secondarySelectedColor: Colors.blue.shade900,
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
                 // Cor do texto/ícone (já deve ser azul)
-                foregroundColor: Colors.blueGrey, 
-                
+                foregroundColor: Colors.blueGrey,
+
                 // Cor do splash/overlay quando o usuário toca (EFEITO)
-                
               ),
             ),
             elevatedButtonTheme: ElevatedButtonThemeData(
@@ -161,18 +194,16 @@ class FuelManagerApp extends StatelessWidget {
             sliderTheme: SliderThemeData(
               // Cor do 'thumb' (o controle redondo)
               thumbColor: Colors.blueGrey,
-              
+
               // Cor da linha ativa (a parte entre o início e o thumb)
-              activeTrackColor: Colors.blueGrey, 
-              
+              activeTrackColor: Colors.blueGrey,
+
               // Cor da linha inativa (a parte entre o thumb e o final)
               inactiveTrackColor: Colors.blueGrey.shade300,
-              
+
               // Cor do texto do 'label' (o valor que aparece quando arrasta, se habilitado)
               valueIndicatorColor: Colors.blueGrey.shade700,
-              valueIndicatorTextStyle: const TextStyle(
-                color: Colors.white,
-              ),
+              valueIndicatorTextStyle: const TextStyle(color: Colors.white),
             ),
             inputDecorationTheme: InputDecorationTheme(
               // 1. Define a borda padrão como OutlineInputBorder
