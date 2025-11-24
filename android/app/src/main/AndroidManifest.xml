@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="car_costs"
+        android:label="Car Costs"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity
