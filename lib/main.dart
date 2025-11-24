@@ -68,31 +68,128 @@ class FuelManagerApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             primarySwatch: Colors.blue,
-            
+            primaryColor: Colors.blueGrey,
+            tabBarTheme: TabBarThemeData(
+              // Cor do ícone/texto da aba SELECIONADA
+              labelColor: Colors.blueGrey,
+
+              // Cor do ícone/texto das abas NÃO SELECIONADAS
+              unselectedLabelColor: Colors.blueGrey.shade200,
+
+              // Cor da linha de destaque da aba (indicator)
+              indicatorColor: Colors.blueGrey,
+            ),
+            switchTheme: SwitchThemeData(
+              // Cor do polegar (thumb) quando ATIVO (ligado)
+              thumbColor: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) {
+                  // Usa a cor primária (azul) quando ligado
+                  return Colors.white;
+                }
+                // Cor do polegar quando DESLIGADO (cinza claro)
+                return Colors.white;
+              }),
+              // Cor do trilho (track) quando ATIVO (ligado)
+              trackColor: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) {
+                  // Usa um tom mais claro ou acinzentado do azul quando ligado
+                  return Colors.blueGrey;
+                }
+                // Cor do trilho quando DESLIGADO (cinza escuro)
+                return Colors.blueGrey.shade100;
+              }),
+            ),
+            chipTheme: ChipThemeData(
+              // Cor de fundo do chip (quando não selecionado)
+              backgroundColor: Colors.grey.shade200, 
+              
+              // Cor da borda
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+
+              // Cor do rótulo (texto)
+              labelStyle: TextStyle(color: Colors.grey.shade800),
+              
+              // Cor do background quando o chip está SELECIONADO (a mais importante)
+              selectedColor: Colors.blueGrey.shade200, 
+
+              // Cor do checkmark ou do ícone/texto quando SELECIONADO
+              checkmarkColor: Colors.blue.shade900, 
+              
+              // Cor do rótulo quando SELECIONADO
+              secondaryLabelStyle: const TextStyle(color: Colors.black),
+              
+              // Cor do ícone quando selecionado
+              secondarySelectedColor: Colors.blue.shade900, 
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                // Cor do texto/ícone (já deve ser azul)
+                foregroundColor: Colors.blueGrey, 
+                
+                // Cor do splash/overlay quando o usuário toca (EFEITO)
+                
+              ),
+            ),
+            elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ElevatedButton.styleFrom(
+                // Cor de fundo padrão: Usa a cor primária do tema (Azul)
+                backgroundColor: Colors.blueGrey,
+
+                // Cor do texto/ícone: Contraste branco
+                foregroundColor: Colors.white,
+
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
+              ),
+            ),
+
+            floatingActionButtonTheme: const FloatingActionButtonThemeData(
+              // Cor de fundo do botão
+              backgroundColor: Colors.blueGrey,
+
+              // Cor dos ícones e texto (deve ser contrastante)
+              foregroundColor: Colors.white,
+
+              // Elevação do botão (sombra)
+              elevation: 4,
+            ),
+
             // ----------------------------------------------------
             // NOVO: CONFIGURAÇÃO GLOBAL DE TEXTFORMFIELD STYLE
             // ----------------------------------------------------
             inputDecorationTheme: InputDecorationTheme(
               // 1. Define a borda padrão como OutlineInputBorder
               border: const OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(8.0)), // Bordas arredondadas (opcional)
+                borderRadius: BorderRadius.all(
+                  Radius.circular(8.0),
+                ), // Bordas arredondadas (opcional)
               ),
-              
+
               // 2. Define a borda quando o campo está habilitado (sem foco)
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
                 borderSide: BorderSide(color: Colors.grey.shade400, width: 1.0),
               ),
-              
+
               // 3. Define a borda quando o campo está focado (digitando)
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
-                borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2.0),
+                borderSide: BorderSide(
+                  color: Theme.of(context).primaryColor,
+                  width: 2.0,
+                ),
               ),
-              
+
               // 4. Se você usa prefixos/sufixos, ajuste o padding
-              contentPadding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 10.0),
-              
+              contentPadding: const EdgeInsets.symmetric(
+                vertical: 16.0,
+                horizontal: 10.0,
+              ),
+
               // 5. Ajuste para o texto do label (opcional)
               labelStyle: TextStyle(color: Colors.grey.shade700),
             ),
