@@ -1,10 +1,10 @@
 // lib/repositories/manutencao_repository.dart
 
-import '../../core/database/database_helper.dart';
-import '../models/manutencao.dart';
+import '../../../core/database/database_helper.dart';
+import '../../models/manutencao/manutencao.dart';
 import 'package:sqflite/sqflite.dart';
 
-class ManutencaoRepository {
+class ManutencaoRepositoryImpl {
   final DatabaseHelper _dbHelper = DatabaseHelper.instance;
   final String _tableName = 'Manutencoes';
 

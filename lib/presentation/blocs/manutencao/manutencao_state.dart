@@ -1,7 +1,7 @@
 // lib/blocs/manutencao/manutencao_state.dart
 
 import 'package:equatable/equatable.dart';
-import '../../models/manutencao.dart';
+import '../../../data/models/manutencao/manutencao.dart';
 
 // Classe base para todos os estados de Manutenção
 abstract class ManutencaoState extends Equatable {

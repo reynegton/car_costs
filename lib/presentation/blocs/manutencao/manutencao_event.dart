@@ -1,7 +1,7 @@
 // lib/blocs/manutencao/manutencao_event.dart
 
 import 'package:equatable/equatable.dart';
-import '../../models/manutencao.dart';
+import '../../../data/models/manutencao/manutencao.dart';
 
 // Classe base para todos os eventos de Manutenção
 abstract class ManutencaoEvent extends Equatable {

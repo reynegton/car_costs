@@ -4,11 +4,11 @@ import 'package:car_costs/data/datasources/combustivel/combustivel_local_datasou
 import 'package:car_costs/data/repositories/combustivel/combustivel_repository_impl.dart';
 import 'package:car_costs/domain/repositories/combustivel/combustivel_repository.dart';
 
-import '../../core/database/database_helper.dart';
-import '../models/veiculo.dart';
+import '../../../core/database/database_helper.dart';
+import '../../models/veiculo/veiculo.dart';
 import 'package:sqflite/sqflite.dart';
 
-class VeiculoRepository {
+class VeiculoRepositoryImpl {
   final DatabaseHelper _dbHelper = DatabaseHelper.instance;
   final String _tableName = 'Veiculos';
   final CombustivelRepository _combustivelRepo =

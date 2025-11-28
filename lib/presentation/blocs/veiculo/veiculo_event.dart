@@ -1,7 +1,7 @@
 // lib/blocs/veiculo/veiculo_event.dart
 
 import 'package:equatable/equatable.dart';
-import '../../models/veiculo.dart';
+import '../../../data/models/veiculo/veiculo.dart';
 
 // Classe base para todos os eventos de Veículo
 abstract class VeiculoEvent extends Equatable {

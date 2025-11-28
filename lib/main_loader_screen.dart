@@ -2,13 +2,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../models/veiculo.dart';
-import '../repositories/configuracao_repository.dart';
-import '../repositories/veiculo_repository.dart';
-import '../blocs/veiculo/veiculo_bloc.dart';
-import '../blocs/veiculo/veiculo_event.dart';
-import 'veiculo_detail_screen.dart';
-import 'veiculo_list_screen.dart';
+import 'data/models/veiculo/veiculo.dart';
+import 'data/repositories/configuracao/configuracao_repository_impl.dart';
+import 'data/repositories/veiculo/veiculo_repository_impl.dart';
+import 'presentation/blocs/veiculo/veiculo_bloc.dart';
+import 'presentation/blocs/veiculo/veiculo_event.dart';
+import 'presentation/pages/veiculo_detail/veiculo_detail_screen.dart';
+import 'presentation/pages/veiculo/veiculo_list_screen.dart';
 
 class MainLoaderScreen extends StatefulWidget {
   const MainLoaderScreen({super.key});
@@ -18,8 +18,8 @@ class MainLoaderScreen extends StatefulWidget {
 }
 
 class _MainLoaderScreenState extends State<MainLoaderScreen> {
-  final _configRepo = ConfiguracaoRepository();
-  final _veiculoRepo = VeiculoRepository();
+  final _configRepo = ConfiguracaoRepositoryImpl();
+  final _veiculoRepo = VeiculoRepositoryImpl();
 
   @override
   void initState() {

@@ -2,9 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../repositories/configuracao_repository.dart';
-import '../blocs/veiculo/veiculo_bloc.dart';
-import '../blocs/veiculo/veiculo_event.dart';
+import '../../../data/repositories/configuracao/configuracao_repository_impl.dart';
+import '../../blocs/veiculo/veiculo_bloc.dart';
+import '../../blocs/veiculo/veiculo_event.dart';
 
 // Diálogo simples para configurar o N da Média Longo Prazo
 class ConfiguracaoDialog extends StatefulWidget {
@@ -25,7 +25,7 @@ class _ConfiguracaoDialogState extends State<ConfiguracaoDialog> {
   }
 
   Future<void> _loadConfig() async {
-    final repo = ConfiguracaoRepository();
+    final repo = ConfiguracaoRepositoryImpl();
     final config = await repo.getConfiguracao();
     setState(() {
       _nValue = config.mediaApuracaoN;
@@ -34,7 +34,7 @@ class _ConfiguracaoDialogState extends State<ConfiguracaoDialog> {
   }
 
   Future<void> _saveConfig() async {
-    final repo = ConfiguracaoRepository();
+    final repo = ConfiguracaoRepositoryImpl();
     final config = await repo.getConfiguracao();
     config.mediaApuracaoN = _nValue;
     await repo.updateConfiguracao(config);

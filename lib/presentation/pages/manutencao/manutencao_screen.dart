@@ -1,13 +1,13 @@
 // lib/screens/manutencao_screen.dart
 
-import 'package:car_costs/old/screens/manutencao_form_screen.dart';
+import 'package:car_costs/presentation/pages/manutencao/manutencao_form_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import '../models/veiculo.dart';
-import '../blocs/manutencao/manutencao_bloc.dart';
-import '../blocs/manutencao/manutencao_event.dart';
-import '../blocs/manutencao/manutencao_state.dart';
+import '../../../data/models/veiculo/veiculo.dart';
+import '../../blocs/manutencao/manutencao_bloc.dart';
+import '../../blocs/manutencao/manutencao_event.dart';
+import '../../blocs/manutencao/manutencao_state.dart';
 
 class ManutencaoScreen extends StatelessWidget {
   final Veiculo veiculo;

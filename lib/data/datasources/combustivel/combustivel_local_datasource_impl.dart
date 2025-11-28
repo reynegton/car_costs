@@ -2,7 +2,7 @@ import 'package:car_costs/core/database/database_helper.dart';
 
 import 'package:car_costs/data/datasources/combustivel/combustivel_local_datasource.dart';
 import 'package:car_costs/data/models/combustivel/combustivel.dart';
-import 'package:car_costs/old/models/veiculo_combustivel.dart';
+import 'package:car_costs/data/models/veiculo/veiculo_combustivel.dart';
 
 
 class CombustivelLocalDatasourceImpl implements CombustivelLocalDatasource{

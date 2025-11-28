@@ -2,14 +2,14 @@
 
 import 'package:car_costs/domain/repositories/abastecimento/abastecimento_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../repositories/manutencao_repository.dart';
-import '../../models/gasto.dart';
+import '../../../data/repositories/manutencao/manutencao_repository_impl.dart';
+import '../../../data/models/relatorio/gasto.dart';
 import 'relatorio_event.dart';
 import 'relatorio_state.dart';
 
 class RelatorioBloc extends Bloc<RelatorioEvent, RelatorioState> {
   final AbastecimentoRepository _abastecimentoRepository;
-  final ManutencaoRepository _manutencaoRepository;
+  final ManutencaoRepositoryImpl _manutencaoRepository;
 
   RelatorioBloc(this._abastecimentoRepository, this._manutencaoRepository)
     : super(RelatorioInitial()) {

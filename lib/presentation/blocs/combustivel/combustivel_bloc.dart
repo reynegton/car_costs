@@ -2,14 +2,14 @@
 
 import 'package:car_costs/domain/repositories/combustivel/combustivel_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../old/repositories/configuracao_repository.dart';
+import '../../../data/repositories/configuracao/configuracao_repository_impl.dart';
 
 import 'combustivel_event.dart';
 import 'combustivel_state.dart';
 
 class CombustivelBloc extends Bloc<CombustivelEvent, CombustivelState> {
   final CombustivelRepository _combustivelRepo;
-  final ConfiguracaoRepository _configRepo;
+  final ConfiguracaoRepositoryImpl _configRepo;
 
   CombustivelBloc(this._combustivelRepo, this._configRepo)
     : super(CombustivelInitial()) {

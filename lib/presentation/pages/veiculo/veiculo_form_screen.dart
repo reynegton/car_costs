@@ -6,9 +6,9 @@ import 'package:car_costs/data/models/combustivel/combustivel.dart';
 import 'package:car_costs/data/repositories/combustivel/combustivel_repository_impl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../blocs/veiculo/veiculo_bloc.dart';
-import '../blocs/veiculo/veiculo_event.dart';
-import '../models/veiculo.dart';
+import '../../blocs/veiculo/veiculo_bloc.dart';
+import '../../blocs/veiculo/veiculo_event.dart';
+import '../../../data/models/veiculo/veiculo.dart';
 
 class VeiculoFormScreen extends StatefulWidget {
   final Veiculo? veiculo; // Se for nulo, é cadastro. Se não, é edição.

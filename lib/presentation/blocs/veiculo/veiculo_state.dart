@@ -1,7 +1,7 @@
 // lib/blocs/veiculo/veiculo_state.dart
 
 import 'package:equatable/equatable.dart';
-import '../../models/veiculo.dart';
+import '../../../data/models/veiculo/veiculo.dart';
 
 // Classe base para todos os estados de Veículo
 abstract class VeiculoState extends Equatable {

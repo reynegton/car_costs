@@ -4,10 +4,10 @@ import 'package:car_costs/core/currency_input_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import '../blocs/manutencao/manutencao_bloc.dart';
-import '../blocs/manutencao/manutencao_event.dart';
-import '../models/manutencao.dart';
-import '../models/veiculo.dart';
+import '../../blocs/manutencao/manutencao_bloc.dart';
+import '../../blocs/manutencao/manutencao_event.dart';
+import '../../../data/models/manutencao/manutencao.dart';
+import '../../../data/models/veiculo/veiculo.dart';
 
 class ManutencaoFormScreen extends StatefulWidget {
   final Veiculo veiculo;

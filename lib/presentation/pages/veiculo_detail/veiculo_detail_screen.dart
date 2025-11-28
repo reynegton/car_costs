@@ -1,23 +1,23 @@
 // lib/screens/veiculo_detail_screen.dart
 
 import 'package:car_costs/core/currency_input_format.dart';
-import 'package:car_costs/old/repositories/configuracao_repository.dart';
-import 'package:car_costs/old/screens/configuracao_dialog.dart';
-import 'package:car_costs/old/screens/relatorio_screen.dart';
-import 'package:car_costs/old/screens/veiculo_list_screen.dart';
+import 'package:car_costs/data/repositories/configuracao/configuracao_repository_impl.dart';
+import 'package:car_costs/presentation/pages/configuracao/configuracao_dialog.dart';
+import 'package:car_costs/presentation/pages/relatorio/relatorio_screen.dart';
+import 'package:car_costs/presentation/pages/veiculo/veiculo_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import '../models/veiculo.dart';
-import '../blocs/veiculo/veiculo_bloc.dart';
-import '../blocs/veiculo/veiculo_state.dart';
-import '../blocs/veiculo/veiculo_event.dart';
-import '../../presentation/blocs/abastecimento/abastecimento_bloc.dart';
-import '../../presentation/blocs/abastecimento/abastecimento_event.dart';
-import '../../presentation/blocs/abastecimento/abastecimento_state.dart';
-import '../../presentation/pages/abastecimento/abastecimento_form_screen.dart';
-import 'manutencao_screen.dart';
-import 'manutencao_form_screen.dart'; // Necessário para o FAB da aba Manutenções
+import '../../../data/models/veiculo/veiculo.dart';
+import '../../blocs/veiculo/veiculo_bloc.dart';
+import '../../blocs/veiculo/veiculo_state.dart';
+import '../../blocs/veiculo/veiculo_event.dart';
+import '../../blocs/abastecimento/abastecimento_bloc.dart';
+import '../../blocs/abastecimento/abastecimento_event.dart';
+import '../../blocs/abastecimento/abastecimento_state.dart';
+import '../abastecimento/abastecimento_form_screen.dart';
+import '../manutencao/manutencao_screen.dart';
+import '../manutencao/manutencao_form_screen.dart'; // Necessário para o FAB da aba Manutenções
 
 // 1. CONVERTIDO PARA STATEFUL WIDGET PARA RASTREAR A ABA
 class VeiculoDetailScreen extends StatefulWidget {
@@ -217,7 +217,7 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
 
                         if (v.id != currentVeiculo.id) {
                           // 1. SALVAR NOVA PREFERÊNCIA
-                          final configRepo = ConfiguracaoRepository();
+                          final configRepo = ConfiguracaoRepositoryImpl();
                           await configRepo.setVeiculoSelecionado(v.id!);
 
                           if (context.mounted) {

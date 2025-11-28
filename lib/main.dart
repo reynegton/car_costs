@@ -5,19 +5,19 @@ import 'dart:io';
 import 'package:car_costs/data/datasources/abastecimento/abastecimento_local_datasource_impl.dart';
 import 'package:car_costs/data/datasources/combustivel/combustivel_local_datasource_impl.dart';
 import 'package:car_costs/presentation/blocs/combustivel/combustivel_bloc.dart';
-import 'package:car_costs/old/blocs/relatorio/relatorio_bloc.dart';
+import 'package:car_costs/presentation/blocs/relatorio/relatorio_bloc.dart';
 import 'package:car_costs/data/repositories/combustivel/combustivel_repository_impl.dart';
-import 'package:car_costs/old/repositories/configuracao_repository.dart';
-import 'package:car_costs/old/screens/main_loader_screen.dart';
+import 'package:car_costs/data/repositories/configuracao/configuracao_repository_impl.dart';
+import 'package:car_costs/main_loader_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'old/repositories/veiculo_repository.dart';
+import 'data/repositories/veiculo/veiculo_repository_impl.dart';
 import 'data/repositories/abastecimento/abastecimento_repository.dart';
-import 'old/repositories/manutencao_repository.dart'; // Importar
-import 'old/blocs/veiculo/veiculo_bloc.dart';
+import 'data/repositories/manutencao/manutencao_repository_impl.dart'; // Importar
+import 'presentation/blocs/veiculo/veiculo_bloc.dart';
 import 'presentation/blocs/abastecimento/abastecimento_bloc.dart';
-import 'old/blocs/manutencao/manutencao_bloc.dart'; // Importar
+import 'presentation/blocs/manutencao/manutencao_bloc.dart'; // Importar
 import 'package:flutter_localizations/flutter_localizations.dart'; 
 
 
@@ -38,10 +38,10 @@ class FuelManagerApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // 1. Instanciar Repositórios
-    final veiculoRepository = VeiculoRepository();
+    final veiculoRepository = VeiculoRepositoryImpl();
     final abastecimentoRepository = AbastecimentoRepositoryImpl(localDatasource: AbastecimentoLocalDatasourceImpl());
-    final manutencaoRepository = ManutencaoRepository(); // Instanciar
-    final configuracaoRepository = ConfiguracaoRepository();
+    final manutencaoRepository = ManutencaoRepositoryImpl(); // Instanciar
+    final configuracaoRepository = ConfiguracaoRepositoryImpl();
     final datasourceCombustiveis = CombustivelLocalDatasourceImpl();
     final combustivelRepository = CombustivelRepositoryImpl(datasource: datasourceCombustiveis);
     return MultiBlocProvider(

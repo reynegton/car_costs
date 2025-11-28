@@ -1,7 +1,7 @@
 // lib/screens/abastecimento_form_screen.dart
 
 import 'package:car_costs/core/currency_input_format.dart';
-import 'package:car_costs/old/repositories/configuracao_repository.dart';
+import 'package:car_costs/data/repositories/configuracao/configuracao_repository_impl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -10,10 +10,10 @@ import '../../blocs/abastecimento/abastecimento_event.dart';
 import '../../blocs/combustivel/combustivel_bloc.dart';
 import '../../blocs/combustivel/combustivel_event.dart';
 import '../../blocs/combustivel/combustivel_state.dart';
-import '../../../old/blocs/veiculo/veiculo_bloc.dart';
-import '../../../old/blocs/veiculo/veiculo_state.dart';
+import '../../blocs/veiculo/veiculo_bloc.dart';
+import '../../blocs/veiculo/veiculo_state.dart';
 import '../../../data/models/abastecimento/abastecimento.dart';
-import '../../../old/models/veiculo.dart';
+import '../../../data/models/veiculo/veiculo.dart';
 import '../../../data/models/combustivel/combustivel.dart';
 
 class AbastecimentoFormScreen extends StatefulWidget {
@@ -86,7 +86,7 @@ class _AbastecimentoFormScreenState extends State<AbastecimentoFormScreen> {
   }
 
   void _loadInitialConfig() async {
-    final repo = ConfiguracaoRepository();
+    final repo = ConfiguracaoRepositoryImpl();
     final isFullTank = await repo.getEncheuTanqueUltimoAbastecimento();
     
     // Atualiza o estado da tela (a única vez que o setState é usado para um estado global)

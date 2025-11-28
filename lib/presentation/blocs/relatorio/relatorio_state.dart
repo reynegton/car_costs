@@ -1,7 +1,7 @@
 // lib/blocs/relatorio/relatorio_state.dart
 
 import 'package:equatable/equatable.dart';
-import '../../models/gasto.dart';
+import '../../../data/models/relatorio/gasto.dart';
 
 abstract class RelatorioState extends Equatable {
   const RelatorioState();

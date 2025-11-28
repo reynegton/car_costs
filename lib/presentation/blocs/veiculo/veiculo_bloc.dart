@@ -4,12 +4,12 @@ import 'package:car_costs/data/datasources/combustivel/combustivel_local_datasou
 import 'package:car_costs/data/repositories/combustivel/combustivel_repository_impl.dart';
 import 'package:car_costs/domain/repositories/combustivel/combustivel_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../repositories/veiculo_repository.dart';
+import '../../../data/repositories/veiculo/veiculo_repository_impl.dart';
 import 'veiculo_event.dart';
 import 'veiculo_state.dart';
 
 class VeiculoBloc extends Bloc<VeiculoEvent, VeiculoState> {
-  final VeiculoRepository _repository;
+  final VeiculoRepositoryImpl _repository;
   final CombustivelRepository _combustivelRepo = CombustivelRepositoryImpl(datasource: CombustivelLocalDatasourceImpl());
 
   // O BLoC começa no estado inicial

@@ -1,9 +1,9 @@
 // lib/repositories/configuracao_repository.dart
 
-import '../../core/database/database_helper.dart';
-import '../models/configuracao.dart';
+import '../../../core/database/database_helper.dart';
+import '../../models/configuracao/configuracao.dart';
 
-class ConfiguracaoRepository {
+class ConfiguracaoRepositoryImpl {
   final DatabaseHelper _dbHelper = DatabaseHelper.instance;
   final String _tableName = 'Configuracoes';
 

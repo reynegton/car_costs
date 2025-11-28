@@ -1,12 +1,12 @@
 // lib/blocs/manutencao/manutencao_bloc.dart
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../repositories/manutencao_repository.dart';
+import '../../../data/repositories/manutencao/manutencao_repository_impl.dart';
 import 'manutencao_event.dart';
 import 'manutencao_state.dart';
 
 class ManutencaoBloc extends Bloc<ManutencaoEvent, ManutencaoState> {
-  final ManutencaoRepository _repository;
+  final ManutencaoRepositoryImpl _repository;
 
   ManutencaoBloc(this._repository) : super(ManutencaoInitial()) {
     on<LoadManutencoes>(_onLoadManutencoes);

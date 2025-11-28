@@ -3,10 +3,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import '../models/veiculo.dart';
-import '../blocs/relatorio/relatorio_bloc.dart';
-import '../blocs/relatorio/relatorio_event.dart';
-import '../blocs/relatorio/relatorio_state.dart';
+import '../../../data/models/veiculo/veiculo.dart';
+import '../../blocs/relatorio/relatorio_bloc.dart';
+import '../../blocs/relatorio/relatorio_event.dart';
+import '../../blocs/relatorio/relatorio_state.dart';
 
 class RelatorioScreen extends StatefulWidget {
   final Veiculo veiculo;
