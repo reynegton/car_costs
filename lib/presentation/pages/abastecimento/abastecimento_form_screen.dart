@@ -1,8 +1,8 @@
 // lib/screens/abastecimento_form_screen.dart
 
 import 'package:car_costs/core/currency_input_format.dart';
-import 'package:car_costs/data/datasources/configuracao/configuracao_local_datasource_impl.dart';
-import 'package:car_costs/data/repositories/configuracao/configuracao_repository_impl.dart';
+
+import 'package:car_costs/domain/repositories/configuracao/configuracao_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -87,7 +87,7 @@ class _AbastecimentoFormScreenState extends State<AbastecimentoFormScreen> {
   }
 
   void _loadInitialConfig() async {
-    final repo = ConfiguracaoRepositoryImpl(localDatasource: ConfiguracaoLocalDatasourceImpl());
+    final repo = context.read<ConfiguracaoRepository>();
     final isFullTank = await repo.getEncheuTanqueUltimoAbastecimento();
     
     // Atualiza o estado da tela (a única vez que o setState é usado para um estado global)

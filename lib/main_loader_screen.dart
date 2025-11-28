@@ -1,29 +1,27 @@
 // lib/screens/main_loader_screen.dart
 
-import 'package:car_costs/data/datasources/configuracao/configuracao_local_datasource_impl.dart';
-import 'package:car_costs/data/datasources/veiculo/veiculo_local_datasource_impl.dart';
+import 'package:car_costs/domain/repositories/configuracao/configuracao_repository.dart';
+import 'package:car_costs/domain/repositories/veiculo/veiculo_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'data/models/veiculo/veiculo.dart';
-import 'data/repositories/configuracao/configuracao_repository_impl.dart';
-import 'data/repositories/veiculo/veiculo_repository_impl.dart';
+
 import 'presentation/blocs/veiculo/veiculo_bloc.dart';
 import 'presentation/blocs/veiculo/veiculo_event.dart';
 import 'presentation/pages/veiculo_detail/veiculo_detail_screen.dart';
 import 'presentation/pages/veiculo/veiculo_list_screen.dart';
 
 class MainLoaderScreen extends StatefulWidget {
-  const MainLoaderScreen({super.key});
+  final ConfiguracaoRepository configRepo;
+  final VeiculoRepository veiculoRepo;
+  const MainLoaderScreen({super.key, required this.configRepo, required this.veiculoRepo});
 
   @override
   State<MainLoaderScreen> createState() => _MainLoaderScreenState();
 }
 
 class _MainLoaderScreenState extends State<MainLoaderScreen> {
-  final _configRepo = ConfiguracaoRepositoryImpl(localDatasource: ConfiguracaoLocalDatasourceImpl() );
-  final _veiculoRepo = VeiculoRepositoryImpl(
-    veiculoLocalDatasource: VeiculoLocalDatasourceImpl(),
-  );
+  
 
   @override
   void initState() {
@@ -38,11 +36,11 @@ class _MainLoaderScreenState extends State<MainLoaderScreen> {
     // 1. Carregar a lista de veículos primeiro (necessário para o VeiculoBloc)
     context.read<VeiculoBloc>().add(LoadVeiculos());
 
-    final int? selectedId = await _configRepo.getVeiculoSelecionadoId();
+    final int? selectedId = await widget.configRepo.getVeiculoSelecionadoId();
 
     if (selectedId != null) {
       // 2. Tenta obter os dados completos do veículo
-      final Veiculo? veiculo = await _veiculoRepo.getVeiculoById(selectedId);
+      final Veiculo? veiculo = await widget.veiculoRepo.getVeiculoById(selectedId);
 
       if (veiculo != null && mounted) {
         // Se o veículo foi encontrado, navega para a tela de detalhes
