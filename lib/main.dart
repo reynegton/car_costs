@@ -4,6 +4,9 @@ import 'dart:io';
 
 import 'package:car_costs/data/datasources/abastecimento/abastecimento_local_datasource_impl.dart';
 import 'package:car_costs/data/datasources/combustivel/combustivel_local_datasource_impl.dart';
+import 'package:car_costs/data/datasources/configuracao/configuracao_local_datasource_impl.dart';
+import 'package:car_costs/data/datasources/manutencao/manutencao_local_datasource_impl.dart';
+import 'package:car_costs/data/datasources/veiculo/veiculo_local_datasource_impl.dart';
 import 'package:car_costs/presentation/blocs/combustivel/combustivel_bloc.dart';
 import 'package:car_costs/presentation/blocs/relatorio/relatorio_bloc.dart';
 import 'package:car_costs/data/repositories/combustivel/combustivel_repository_impl.dart';
@@ -38,10 +41,15 @@ class FuelManagerApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // 1. Instanciar Repositórios
-    final veiculoRepository = VeiculoRepositoryImpl();
+    final veiculoLocalDatasource = VeiculoLocalDatasourceImpl();
+    final manutencaoLocalDatasource = ManutencaoLocalDatasourceImpl();
+    final configuracaoLocalDatasource = ConfiguracaoLocalDatasourceImpl();
+    final veiculoRepository = VeiculoRepositoryImpl(
+      veiculoLocalDatasource: veiculoLocalDatasource,
+    );
     final abastecimentoRepository = AbastecimentoRepositoryImpl(localDatasource: AbastecimentoLocalDatasourceImpl());
-    final manutencaoRepository = ManutencaoRepositoryImpl(); // Instanciar
-    final configuracaoRepository = ConfiguracaoRepositoryImpl();
+    final manutencaoRepository = ManutencaoRepositoryImpl(manutencaoLocalDatasource: manutencaoLocalDatasource); // Instanciar
+    final configuracaoRepository = ConfiguracaoRepositoryImpl(localDatasource: configuracaoLocalDatasource);
     final datasourceCombustiveis = CombustivelLocalDatasourceImpl();
     final combustivelRepository = CombustivelRepositoryImpl(datasource: datasourceCombustiveis);
     return MultiBlocProvider(
@@ -65,7 +73,7 @@ class FuelManagerApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) =>
-              CombustivelBloc(combustivelRepository, configuracaoRepository),
+              CombustivelBloc(combustivelRepository, veiculoRepository, configuracaoRepository),
         ),
       ],
       child: SafeArea(

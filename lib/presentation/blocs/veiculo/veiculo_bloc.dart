@@ -1,16 +1,13 @@
 // lib/blocs/veiculo/veiculo_bloc.dart
 
-import 'package:car_costs/data/datasources/combustivel/combustivel_local_datasource_impl.dart';
-import 'package:car_costs/data/repositories/combustivel/combustivel_repository_impl.dart';
-import 'package:car_costs/domain/repositories/combustivel/combustivel_repository.dart';
+import 'package:car_costs/domain/repositories/veiculo/veiculo_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../data/repositories/veiculo/veiculo_repository_impl.dart';
 import 'veiculo_event.dart';
 import 'veiculo_state.dart';
 
 class VeiculoBloc extends Bloc<VeiculoEvent, VeiculoState> {
-  final VeiculoRepositoryImpl _repository;
-  final CombustivelRepository _combustivelRepo = CombustivelRepositoryImpl(datasource: CombustivelLocalDatasourceImpl());
+  final VeiculoRepository _repository;
+  
 
   // O BLoC começa no estado inicial
   VeiculoBloc(this._repository) : super(VeiculoInitial()) {
@@ -35,7 +32,7 @@ class VeiculoBloc extends Bloc<VeiculoEvent, VeiculoState> {
       // *** CORREÇÃO: Preencher o campo combustivelIdsAceitos ***
       for (var veiculo in veiculos) {
         if (veiculo.id != null) {
-          final ids = await _combustivelRepo.getCombustivelIdsByVeiculo(
+          final ids = await _repository.getCombustivelIdsByVeiculo(
             veiculo.id!,
           );
           veiculo.combustivelIdsAceitos = ids;

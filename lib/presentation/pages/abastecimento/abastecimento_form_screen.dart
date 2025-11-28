@@ -1,6 +1,7 @@
 // lib/screens/abastecimento_form_screen.dart
 
 import 'package:car_costs/core/currency_input_format.dart';
+import 'package:car_costs/data/datasources/configuracao/configuracao_local_datasource_impl.dart';
 import 'package:car_costs/data/repositories/configuracao/configuracao_repository_impl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -86,7 +87,7 @@ class _AbastecimentoFormScreenState extends State<AbastecimentoFormScreen> {
   }
 
   void _loadInitialConfig() async {
-    final repo = ConfiguracaoRepositoryImpl();
+    final repo = ConfiguracaoRepositoryImpl(localDatasource: ConfiguracaoLocalDatasourceImpl());
     final isFullTank = await repo.getEncheuTanqueUltimoAbastecimento();
     
     // Atualiza o estado da tela (a única vez que o setState é usado para um estado global)
@@ -203,11 +204,11 @@ class _AbastecimentoFormScreenState extends State<AbastecimentoFormScreen> {
     final kmAtual = int.tryParse(_kmAtualController.text) ?? 0;
 
     // Validação do KM
-    if (kmAtual <= widget.veiculo.kmAtual) {
+    if (kmAtual < widget.veiculo.kmAtual) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
-            'A KM Atual deve ser maior que a última KM registrada no veículo.',
+            'A KM do abastecimento não pode ser inferior a KM atual registrada no veículo.',
           ),
         ),
       );

@@ -3,15 +3,15 @@
 import 'package:car_costs/domain/repositories/abastecimento/abastecimento_repository.dart';
 import 'package:car_costs/data/models/veiculo/veiculo.dart';
 import 'package:car_costs/data/repositories/configuracao/configuracao_repository_impl.dart';
+import 'package:car_costs/domain/repositories/veiculo/veiculo_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../data/repositories/veiculo/veiculo_repository_impl.dart'; // Necessário para atualizar o Veículo
 
 import 'abastecimento_event.dart';
 import 'abastecimento_state.dart';
 
 class AbastecimentoBloc extends Bloc<AbastecimentoEvent, AbastecimentoState> {
   final AbastecimentoRepository _abastecimentoRepository;
-  final VeiculoRepositoryImpl _veiculoRepository; // Dependência adicional
+  final VeiculoRepository _veiculoRepository; // Dependência adicional
   final ConfiguracaoRepositoryImpl _configuracaoRepository;
 
   AbastecimentoBloc(

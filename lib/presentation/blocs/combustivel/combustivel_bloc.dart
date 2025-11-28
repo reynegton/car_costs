@@ -1,6 +1,7 @@
 // lib/blocs/combustivel/combustivel_bloc.dart
 
 import 'package:car_costs/domain/repositories/combustivel/combustivel_repository.dart';
+import 'package:car_costs/domain/repositories/veiculo/veiculo_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../data/repositories/configuracao/configuracao_repository_impl.dart';
 
@@ -9,9 +10,10 @@ import 'combustivel_state.dart';
 
 class CombustivelBloc extends Bloc<CombustivelEvent, CombustivelState> {
   final CombustivelRepository _combustivelRepo;
+  final VeiculoRepository _veiculoRepo;
   final ConfiguracaoRepositoryImpl _configRepo;
 
-  CombustivelBloc(this._combustivelRepo, this._configRepo)
+  CombustivelBloc(this._combustivelRepo, this._veiculoRepo, this._configRepo)
     : super(CombustivelInitial()) {
     on<LoadCombustiveisData>(_onLoadCombustiveisData);
     on<SetUltimoCombustivel>(_onSetUltimoCombustivel);
@@ -25,7 +27,7 @@ class CombustivelBloc extends Bloc<CombustivelEvent, CombustivelState> {
     emit(CombustivelLoading());
     try {
       // 1. Obter IDs aceitos pelo veículo
-      final acceptedIds = await _combustivelRepo.getCombustivelIdsByVeiculo(
+      final acceptedIds = await _veiculoRepo.getCombustivelIdsByVeiculo(
         event.veiculoId,
       );
 

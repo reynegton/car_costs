@@ -1,5 +1,6 @@
 // lib/screens/veiculo_list_screen.dart
 
+import 'package:car_costs/data/datasources/configuracao/configuracao_local_datasource_impl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../blocs/veiculo/veiculo_bloc.dart';
@@ -136,7 +137,7 @@ class VeiculoListScreen extends StatelessWidget {
         // ----------------------------------------------------
         onTap: () async {
           // 1. SALVA O VEÍCULO SELECIONADO COMO ÚLTIMO UTILIZADO
-          final configRepo = ConfiguracaoRepositoryImpl();
+          final configRepo = ConfiguracaoRepositoryImpl(localDatasource: ConfiguracaoLocalDatasourceImpl());
           await configRepo.setVeiculoSelecionado(veiculo.id!);
           if (context.mounted) {
             Navigator.of(context).pushReplacement(

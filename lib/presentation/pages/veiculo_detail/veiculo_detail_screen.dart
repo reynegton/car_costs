@@ -1,6 +1,7 @@
 // lib/screens/veiculo_detail_screen.dart
 
 import 'package:car_costs/core/currency_input_format.dart';
+import 'package:car_costs/data/datasources/configuracao/configuracao_local_datasource_impl.dart';
 import 'package:car_costs/data/repositories/configuracao/configuracao_repository_impl.dart';
 import 'package:car_costs/presentation/pages/configuracao/configuracao_dialog.dart';
 import 'package:car_costs/presentation/pages/relatorio/relatorio_screen.dart';
@@ -217,7 +218,7 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
 
                         if (v.id != currentVeiculo.id) {
                           // 1. SALVAR NOVA PREFERÊNCIA
-                          final configRepo = ConfiguracaoRepositoryImpl();
+                          final configRepo = ConfiguracaoRepositoryImpl(localDatasource: ConfiguracaoLocalDatasourceImpl());
                           await configRepo.setVeiculoSelecionado(v.id!);
 
                           if (context.mounted) {

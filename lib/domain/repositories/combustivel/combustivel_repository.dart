@@ -14,16 +14,4 @@ abstract class CombustivelRepository {
   // ----------------------------------------------------
   Future<List<Combustivel>> getAllCombustiveis();
 
-  // ----------------------------------------------------
-  // R - READ (Listar IDs de Combustíveis Aceitos por um Veículo)
-  // ----------------------------------------------------
-  Future<List<int>> getCombustivelIdsByVeiculo(int veiculoId) ;
-
-  // ----------------------------------------------------
-  // C/D - Sincronizar Combustíveis Aceitos
-  // ----------------------------------------------------
-  Future<void> syncCombustiveisAceitos(
-    int veiculoId,
-    List<int> combustivelIds,
-  );
 }

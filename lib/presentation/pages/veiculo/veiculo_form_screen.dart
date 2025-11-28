@@ -2,8 +2,10 @@
 
 import 'package:car_costs/core/currency_input_format.dart';
 import 'package:car_costs/data/datasources/combustivel/combustivel_local_datasource_impl.dart';
+import 'package:car_costs/data/datasources/veiculo/veiculo_local_datasource_impl.dart';
 import 'package:car_costs/data/models/combustivel/combustivel.dart';
 import 'package:car_costs/data/repositories/combustivel/combustivel_repository_impl.dart';
+import 'package:car_costs/data/repositories/veiculo/veiculo_repository_impl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../blocs/veiculo/veiculo_bloc.dart';
@@ -68,12 +70,13 @@ class _VeiculoFormScreenState extends State<VeiculoFormScreen> {
 
   Future<void> _loadCombustiveis() async {
     final repo = CombustivelRepositoryImpl(datasource: CombustivelLocalDatasourceImpl());
+    final repoVeiculo = VeiculoRepositoryImpl(veiculoLocalDatasource: VeiculoLocalDatasourceImpl());
     final all = await repo.getAllCombustiveis();
 
     // NOVO: Se estiver editando, carrega os IDs aceitos
     List<int> acceptedIds = [];
     if (widget.veiculo != null && widget.veiculo!.id != null) {
-      acceptedIds = await repo.getCombustivelIdsByVeiculo(widget.veiculo!.id!);
+      acceptedIds = await repoVeiculo.getCombustivelIdsByVeiculo(widget.veiculo!.id!);
     }
 
     setState(() {

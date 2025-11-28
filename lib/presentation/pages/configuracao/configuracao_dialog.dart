@@ -1,5 +1,6 @@
 // lib/screens/configuracao_dialog.dart
 
+import 'package:car_costs/data/datasources/configuracao/configuracao_local_datasource_impl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../data/repositories/configuracao/configuracao_repository_impl.dart';
@@ -25,7 +26,7 @@ class _ConfiguracaoDialogState extends State<ConfiguracaoDialog> {
   }
 
   Future<void> _loadConfig() async {
-    final repo = ConfiguracaoRepositoryImpl();
+    final repo = ConfiguracaoRepositoryImpl(localDatasource: ConfiguracaoLocalDatasourceImpl());
     final config = await repo.getConfiguracao();
     setState(() {
       _nValue = config.mediaApuracaoN;
@@ -34,7 +35,7 @@ class _ConfiguracaoDialogState extends State<ConfiguracaoDialog> {
   }
 
   Future<void> _saveConfig() async {
-    final repo = ConfiguracaoRepositoryImpl();
+    final repo = ConfiguracaoRepositoryImpl(localDatasource: ConfiguracaoLocalDatasourceImpl());
     final config = await repo.getConfiguracao();
     config.mediaApuracaoN = _nValue;
     await repo.updateConfiguracao(config);

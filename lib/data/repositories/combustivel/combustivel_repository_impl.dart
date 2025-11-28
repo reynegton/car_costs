@@ -27,22 +27,5 @@ class CombustivelRepositoryImpl implements CombustivelRepository {
     return datasource.getAllCombustiveis();
   }
 
-  // ----------------------------------------------------
-  // R - READ (Listar IDs de Combustíveis Aceitos por um Veículo)
-  // ----------------------------------------------------
-  @override
-  Future<List<int>> getCombustivelIdsByVeiculo(int veiculoId) async {
-    return datasource.getCombustivelIdsByVeiculo(veiculoId);
-  }
-
-  // ----------------------------------------------------
-  // C/D - Sincronizar Combustíveis Aceitos
-  // ----------------------------------------------------
-  @override
-  Future<void> syncCombustiveisAceitos(
-    int veiculoId,
-    List<int> combustivelIds,
-  ) async {
-    await datasource.syncCombustiveisAceitos(veiculoId, combustivelIds);
-  }
+  
 }

@@ -1,5 +1,7 @@
 // lib/screens/main_loader_screen.dart
 
+import 'package:car_costs/data/datasources/configuracao/configuracao_local_datasource_impl.dart';
+import 'package:car_costs/data/datasources/veiculo/veiculo_local_datasource_impl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'data/models/veiculo/veiculo.dart';
@@ -18,8 +20,10 @@ class MainLoaderScreen extends StatefulWidget {
 }
 
 class _MainLoaderScreenState extends State<MainLoaderScreen> {
-  final _configRepo = ConfiguracaoRepositoryImpl();
-  final _veiculoRepo = VeiculoRepositoryImpl();
+  final _configRepo = ConfiguracaoRepositoryImpl(localDatasource: ConfiguracaoLocalDatasourceImpl() );
+  final _veiculoRepo = VeiculoRepositoryImpl(
+    veiculoLocalDatasource: VeiculoLocalDatasourceImpl(),
+  );
 
   @override
   void initState() {
