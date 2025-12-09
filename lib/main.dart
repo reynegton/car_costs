@@ -320,7 +320,6 @@ class FuelManagerApp extends StatelessWidget {
                 primary: AppColors.primary,
                 secondary: AppColors.info,
                 surface: AppColors.surfaceDark,
-                background: AppColors.backgroundDark,
                 onPrimary: AppColors.textOnPrimary,
                 onSecondary: AppColors.textPrimaryDark,
                 onSurface: AppColors.textPrimaryDark,

@@ -8,7 +8,6 @@ import 'package:car_costs/presentation/pages/relatorio/relatorio_screen.dart';
 import 'package:car_costs/presentation/pages/veiculo/veiculo_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 import 'package:car_costs/core/theme_controller.dart';
 import 'package:intl/intl.dart';
 import '../../../data/models/veiculo/veiculo.dart';
