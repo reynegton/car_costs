@@ -760,9 +760,8 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
                       ano: veiculo.ano,
                       capacidadeTanqueLitros: veiculo.capacidadeTanqueLitros,
                       mediaManual: veiculo.mediaManual,
-
+                      mediaLongPrazo: veiculo.mediaLongPrazo,
                       kmAtual: novaKm,
-
                       kmUltimoNivel: veiculo.kmUltimoNivel,
                       litrosNoTanque: veiculo.litrosNoTanque,
                     );
