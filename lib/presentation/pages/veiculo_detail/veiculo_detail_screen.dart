@@ -1,12 +1,15 @@
 // lib/screens/veiculo_detail_screen.dart
 
 import 'package:car_costs/core/currency_input_format.dart';
+import 'package:car_costs/core/app_colors.dart';
 import 'package:car_costs/domain/repositories/configuracao/configuracao_repository.dart';
 import 'package:car_costs/presentation/pages/configuracao/configuracao_dialog.dart';
 import 'package:car_costs/presentation/pages/relatorio/relatorio_screen.dart';
 import 'package:car_costs/presentation/pages/veiculo/veiculo_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
+import 'package:car_costs/core/theme_controller.dart';
 import 'package:intl/intl.dart';
 import '../../../data/models/veiculo/veiculo.dart';
 import '../../blocs/veiculo/veiculo_bloc.dart';
@@ -187,6 +190,9 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
 
           final currentVeiculo = _getCurrentVeiculo(context);
 
+          final themeController = context.watch<ThemeController>();
+          final currentMode = themeController.themeMode;
+
           return Column(
             children: [
               UserAccountsDrawerHeader(
@@ -197,7 +203,7 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
                 currentAccountPicture: const Icon(
                   Icons.directions_car,
                   size: 48,
-                  color: Colors.white,
+                  color: AppColors.white,
                 ),
                 decoration: BoxDecoration(
                   color: Theme.of(context).primaryColor,
@@ -208,7 +214,7 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
                   children: allVeiculos.map((v) {
                     return ListTile(
                       leading: v.id == currentVeiculo.id
-                          ? const Icon(Icons.check_circle, color: Colors.green)
+                          ? const Icon(Icons.check_circle, color: AppColors.success)
                           : const Icon(Icons.directions_car),
                       title: Text(v.nome),
                       selected: v.id == currentVeiculo.id,
@@ -232,6 +238,73 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
                       },
                     );
                   }).toList(),
+                ),
+              ),
+              const Divider(),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Tema', style: TextStyle(fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      children: [
+                        ChoiceChip(
+                          label: Text(
+                            'Sistema',
+                            style: TextStyle(
+                              color: currentMode == ThemeMode.system
+                                  ? AppColors.textOnPrimary
+                                  : AppColors.chipLabel,
+                            ),
+                          ),
+                          selected: currentMode == ThemeMode.system,
+                          selectedColor: AppColors.primary,
+                          backgroundColor: AppColors.chipBackground,
+                          showCheckmark: true,
+                          checkmarkColor: AppColors.textOnPrimary,
+                          onSelected: (_) =>
+                              themeController.setThemeMode(ThemeMode.system),
+                        ),
+                        ChoiceChip(
+                          label: Text(
+                            'Claro',
+                            style: TextStyle(
+                              color: currentMode == ThemeMode.light
+                                  ? AppColors.textOnPrimary
+                                  : AppColors.chipLabel,
+                            ),
+                          ),
+                          selected: currentMode == ThemeMode.light,
+                          selectedColor: AppColors.primary,
+                          backgroundColor: AppColors.chipBackground,
+                          showCheckmark: true,
+                          checkmarkColor: AppColors.textOnPrimary,
+                          onSelected: (_) =>
+                              themeController.setThemeMode(ThemeMode.light),
+                        ),
+                        ChoiceChip(
+                          label: Text(
+                            'Escuro',
+                            style: TextStyle(
+                              color: currentMode == ThemeMode.dark
+                                  ? AppColors.textOnPrimary
+                                  : AppColors.chipLabel,
+                            ),
+                          ),
+                          selected: currentMode == ThemeMode.dark,
+                          selectedColor: AppColors.primary,
+                          backgroundColor: AppColors.chipBackground,
+                          showCheckmark: true,
+                          checkmarkColor: AppColors.textOnPrimary,
+                          onSelected: (_) =>
+                              themeController.setThemeMode(ThemeMode.dark),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
               const Divider(),
@@ -343,7 +416,7 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
                   children: [
                     Row(
                       children: [
-                        const Icon(Icons.speed, color: Colors.blue),
+                        Icon(Icons.speed, color: AppColors.infoFromTheme(context)),
                         const SizedBox(width: 8),
                         Text(
                           'KM Atual: ${currentVeiculo.kmAtual} km',
@@ -358,7 +431,7 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
                       icon: const Icon(
                         Icons.edit,
                         size: 20,
-                        color: Colors.grey,
+                        color: AppColors.greyDark,
                       ),
                       tooltip: 'Ajustar KM/Nível',
                       onPressed: () =>
@@ -375,7 +448,7 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
                   children: [
                     Row(
                       children: [
-                        const Icon(Icons.trending_up, color: Colors.green),
+                        Icon(Icons.trending_up, color: AppColors.successFromTheme(context)),
                         const SizedBox(width: 8),
                         Text(
                           'Última Média: ${currentVeiculo.mediaManual.toStringAsFixed(2)} km/l',
@@ -389,7 +462,7 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
                     // NOVO: AUTONOMIA COM ÚLTIMA MÉDIA
                     Text(
                       'Autonomia: ${autonomiaUltimaMedia.toStringAsFixed(0)} km',
-                      style: const TextStyle(fontSize: 16, color: Colors.green),
+                      style: TextStyle(fontSize: 16, color: AppColors.successFromTheme(context)),
                     ),
                   ],
                 ),
@@ -404,7 +477,7 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
                       children: [
                         Row(
                           children: [
-                            const Icon(Icons.show_chart, color: Colors.purple),
+                            Icon(Icons.show_chart, color: AppColors.purpleFromTheme(context)),
                             const SizedBox(width: 8),
                             Text(
                               'Média Longo Prazo: ${currentVeiculo.mediaLongPrazo.toStringAsFixed(2)} km/l',
@@ -416,10 +489,10 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
                           ],
                         ),
                         IconButton(
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.settings,
                             size: 20,
-                            color: Colors.purple,
+                            color: AppColors.purpleFromTheme(context),
                           ),
                           tooltip: 'Configurar Média Longo Prazo (N)',
                           onPressed: () async {
@@ -439,9 +512,9 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
                     // NOVO: AUTONOMIA COM MÉDIA LONGO PRAZO
                     Text(
                       'Autonomia: ${autonomiaLongoPrazo.toStringAsFixed(0)} km',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
-                        color: Colors.purple,
+                        color: AppColors.purpleFromTheme(context),
                       ),
                     ),
 
@@ -459,10 +532,10 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
                     ),
                     // BOTÃO DE CALIBRAÇÃO
                     IconButton(
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.tune,
                         size: 20,
-                        color: Colors.orange,
+                        color: AppColors.warningFromTheme(context),
                       ),
                       tooltip: 'Calibrar Nível Manualmente',
                       onPressed: () => _showNivelEditDialog(
@@ -485,8 +558,10 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
                       // 1. O PRÓPRIO INDICADOR DE PROGRESSO
                       LinearProgressIndicator(
                         value: nivelPercentual,
-                        backgroundColor: Colors.grey[300],
-                        color: nivelPercentual > 0.2 ? Colors.green : Colors.red,
+                        backgroundColor: AppColors.progressBackground,
+                        color: nivelPercentual > 0.2
+                            ? AppColors.successFromTheme(context)
+                            : AppColors.delete,
                         minHeight: 10,
                       ),
 
@@ -501,15 +576,15 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
                             children: [
                               // Marcador de 1/4 (25% da largura)
                               SizedBox(width: totalWidth * 0.25 - 1.5), 
-                              Container(width: 3, height: 10, color: Color.fromRGBO(0, 0, 0, 0.5)),
+                              Container(width: 3, height: 10, color: AppColors.fuelGaugeTick),
                               
                               // Marcador de 1/2 (25% restante)
                               SizedBox(width: totalWidth * 0.25 - 3),
-                              Container(width: 3, height: 10, color: Color.fromRGBO(0, 0, 0, 0.5)),
+                              Container(width: 3, height: 10, color: AppColors.fuelGaugeTick),
                               
                               // Marcador de 3/4 (25% restante)
                               SizedBox(width: totalWidth * 0.25 - 3),
-                              Container(width: 3, height: 10, color: Color.fromRGBO(0, 0, 0, 0.5)),
+                              Container(width: 3, height: 10, color: AppColors.fuelGaugeTick),
                               
                               // O último SizedBox (25% restante) leva ao final (100%)
                             ],
@@ -524,9 +599,9 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     SizedBox(width: 0), // Posição 0%
-                    Text('1/4', style: TextStyle(fontSize: 10, color: Colors.grey)),
-                    Text('1/2', style: TextStyle(fontSize: 10, color: Colors.grey)),
-                    Text('3/4', style: TextStyle(fontSize: 10, color: Colors.grey)),
+                    Text('1/4', style: TextStyle(fontSize: 10, color: AppColors.greyDark)),
+                    Text('1/2', style: TextStyle(fontSize: 10, color: AppColors.greyDark)),
+                    Text('3/4', style: TextStyle(fontSize: 10, color: AppColors.greyDark)),
                     SizedBox(width: 0), // Posição 100%
                   ],
                 ),
@@ -581,7 +656,9 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
               return ListTile(
                 leading: Icon(
                   a.tanqueCheio ? Icons.local_gas_station : Icons.local_parking,
-                  color: a.tanqueCheio ? Colors.blue : Colors.grey,
+                  color: a.tanqueCheio
+                      ? AppColors.infoFromTheme(context)
+                      : AppColors.grey,
                 ),
                 title: Text(
                   '$date - ${a.tipoCombustivel} (${a.litrosAbastecidos.toStringAsFixed(2)} L)',
@@ -600,8 +677,8 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
                       style: TextStyle(
                         fontSize: 12,
                         color: a.mediaCalculada != null
-                            ? Colors.green
-                            : Colors.orange,
+                            ? AppColors.successFromTheme(context)
+                            : AppColors.warningFromTheme(context),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -610,7 +687,7 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
                       icon: const Icon(
                         Icons.delete,
                         size: 20,
-                        color: Colors.red,
+                        color: AppColors.delete,
                       ),
                       onPressed: () => _confirmDeleteAbastecimento(
                         context,
@@ -829,22 +906,22 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
-                          // 1. Linha de Marcadores
+                          // Marcadores visuais de 0%, 25%, 50%, 75% e 100%
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              // 0%
+                              // 0% (Vermelho)
                               const Icon(
                                 Icons.circle,
                                 size: 8,
-                                color: Colors.red,
+                                color: AppColors.delete,
                               ),
                               // 25%
                               Container(
                                 width: 8,
                                 height: 8,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey,
+                                decoration: const BoxDecoration(
+                                  color: AppColors.grey,
                                   shape: BoxShape.circle,
                                 ),
                               ),
@@ -852,8 +929,8 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
                               Container(
                                 width: 8,
                                 height: 8,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey,
+                                decoration: const BoxDecoration(
+                                  color: AppColors.grey,
                                   shape: BoxShape.circle,
                                 ),
                               ),
@@ -861,27 +938,32 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
                               Container(
                                 width: 8,
                                 height: 8,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey,
+                                decoration: const BoxDecoration(
+                                  color: AppColors.grey,
                                   shape: BoxShape.circle,
                                 ),
                               ),
                               // 100%
-                              const Icon(
+                              Icon(
                                 Icons.circle,
                                 size: 8,
-                                color: Colors.green,
+                                color: AppColors.successFromTheme(context),
                               ),
                             ],
                           ),
 
-                          // 2. O Slider, SEM DIVISÕES, por cima
+                          // Slider por cima dos marcadores
                           SliderTheme(
                             data: SliderTheme.of(context).copyWith(
                               // O thumb/círculo é mais visível
                               thumbShape: const RoundSliderThumbShape(
                                 enabledThumbRadius: 10.0,
                               ),
+                              // Cores do trilho para temas claro/escuro
+                              activeTrackColor:
+                                  AppColors.successFromTheme(context),
+                              inactiveTrackColor:
+                                  AppColors.sliderInactiveFromTheme(context),
                               // Garante que o slider não tem a linha de ticks por cima
                               tickMarkShape: const RoundSliderTickMarkShape(),
                               showValueIndicator: ShowValueIndicator.onDrag,
@@ -910,11 +992,11 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
                     const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Vazio', style: TextStyle(fontSize: 12)),
-                        Text('1/4', style: TextStyle(fontSize: 12)),
-                        Text('1/2', style: TextStyle(fontSize: 12)),
-                        Text('3/4', style: TextStyle(fontSize: 12)),
-                        Text('Cheio', style: TextStyle(fontSize: 12)),
+                        Text('Vazio', style: TextStyle(fontSize: 12, color: AppColors.greyDark)),
+                        Text('1/4', style: TextStyle(fontSize: 12, color: AppColors.greyDark)),
+                        Text('1/2', style: TextStyle(fontSize: 12, color: AppColors.greyDark)),
+                        Text('3/4', style: TextStyle(fontSize: 12, color: AppColors.greyDark)),
+                        Text('Cheio', style: TextStyle(fontSize: 12, color: AppColors.greyDark)),
                       ],
                     ),
                     // ----------------------------------------------------
@@ -990,8 +1072,8 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
               );
               Navigator.of(ctx).pop();
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Deletar', style: TextStyle(color: Colors.white)),
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.delete),
+            child: const Text('Deletar', style: TextStyle(color: AppColors.textOnPrimary)),
           ),
         ],
       ),

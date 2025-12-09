@@ -4,6 +4,7 @@ import 'package:car_costs/core/currency_input_format.dart';
 
 import 'package:car_costs/domain/repositories/configuracao/configuracao_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:car_costs/core/app_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import '../../blocs/abastecimento/abastecimento_bloc.dart';
@@ -396,9 +397,9 @@ class _AbastecimentoFormScreenState extends State<AbastecimentoFormScreen> {
                     }
 
                     if (state.combustiveisAceitos.isEmpty) {
-                      return const Text(
+                      return Text(
                         'Nenhum combustível aceito configurado para este veículo.',
-                        style: TextStyle(color: Colors.red),
+                        style: const TextStyle(color: AppColors.delete),
                       );
                     }
 

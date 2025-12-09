@@ -22,6 +22,8 @@ import 'package:car_costs/presentation/blocs/relatorio/relatorio_bloc.dart';
 import 'package:car_costs/data/repositories/combustivel/combustivel_repository_impl.dart';
 import 'package:car_costs/data/repositories/configuracao/configuracao_repository_impl.dart';
 import 'package:car_costs/main_loader_screen.dart';
+import 'package:car_costs/core/app_colors.dart';
+import 'package:car_costs/core/theme_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
@@ -54,6 +56,9 @@ class FuelManagerApp extends StatelessWidget {
 
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider<ThemeController>(
+          create: (_) => ThemeController(),
+        ),
         Provider<VeiculoLocalDatasource>(create: (context) => VeiculoLocalDatasourceImpl()),
         Provider<ManutencaoLocalDatasource>(create: (context) => ManutencaoLocalDatasourceImpl()),
         Provider<ConfiguracaoLocalDatasource>(create: (context) => ConfiguracaoLocalDatasourceImpl()),
@@ -131,7 +136,9 @@ class FuelManagerApp extends StatelessWidget {
           ),
         ],
         child: SafeArea(
-          child: MaterialApp(
+          child: Consumer<ThemeController>(
+            builder: (context, themeController, _) {
+              return MaterialApp(
             title: 'Fuel Manager',
             debugShowCheckedModeBanner: false,
             // ----------------------------------------------------
@@ -150,58 +157,57 @@ class FuelManagerApp extends StatelessWidget {
           locale: const Locale('pt', 'BR'), 
           // ----------------------------------------------------
             theme: ThemeData(
-              primarySwatch: Colors.blue,
-              primaryColor: Colors.blueGrey,
+              primarySwatch: AppColors.primarySwatch,
+              primaryColor: AppColors.primary,
               tabBarTheme: TabBarThemeData(
                 // Cor do ícone/texto da aba SELECIONADA
-                labelColor: Colors.blueGrey,
+                labelColor: AppColors.primary,
       
                 // Cor do ícone/texto das abas NÃO SELECIONADAS
-                unselectedLabelColor: Colors.blueGrey.shade200,
+                unselectedLabelColor: AppColors.chipSelected,
       
                 // Cor da linha de destaque da aba (indicator)
-                indicatorColor: Colors.blueGrey,
+                indicatorColor: AppColors.primary,
               ),
       
               colorScheme:
                   ColorScheme.fromSwatch(
                     // Usa o azul como a cor principal do esquema
-                    primarySwatch: Colors.blueGrey,
+                    primarySwatch: AppColors.primarySwatch,
       
                     // Define a cor de destaque (seleção)
-                    accentColor: Colors.blueAccent,
+                    accentColor: AppColors.accent,
                   ).copyWith(
                     // Sobrescreve a cor de superfície e a cor principal para o DatePicker
-                    primary:
-                        Colors.blue.shade700, // Cor do cabeçalho (Azul Escuro)
-                    onPrimary: Colors.white, // Cor do texto/ícones no cabeçalho
-                    surface: Colors.white, // Cor de fundo do calendário
-                    onSurface: Colors.black, // Cor dos dias e texto
-                    secondary: Colors.blue, // Cor do círculo de seleção
+                    primary: AppColors.primaryVariant, // Cor do cabeçalho (Azul Escuro)
+                    onPrimary: AppColors.textOnPrimary, // Cor do texto/ícones no cabeçalho
+                    surface: AppColors.surface, // Cor de fundo do calendário
+                    onSurface: AppColors.textPrimary, // Cor dos dias e texto
+                    secondary: AppColors.info, // Cor do círculo de seleção
                   ),
               switchTheme: SwitchThemeData(
                 // Cor do polegar (thumb) quando ATIVO (ligado)
                 thumbColor: WidgetStateProperty.resolveWith((states) {
                   if (states.contains(WidgetState.selected)) {
                     // Usa a cor primária (azul) quando ligado
-                    return Colors.white;
+                    return AppColors.white;
                   }
                   // Cor do polegar quando DESLIGADO (cinza claro)
-                  return Colors.white;
+                  return AppColors.white;
                 }),
                 // Cor do trilho (track) quando ATIVO (ligado)
                 trackColor: WidgetStateProperty.resolveWith((states) {
                   if (states.contains(WidgetState.selected)) {
                     // Usa um tom mais claro ou acinzentado do azul quando ligado
-                    return Colors.blueGrey;
+                    return AppColors.primary;
                   }
                   // Cor do trilho quando DESLIGADO (cinza escuro)
-                  return Colors.blueGrey.shade100;
+                  return AppColors.primaryTrackDisabled;
                 }),
               ),
               chipTheme: ChipThemeData(
                 // Cor de fundo do chip (quando não selecionado)
-                backgroundColor: Colors.grey.shade200,
+                backgroundColor: AppColors.chipBackground,
       
                 // Cor da borda
                 shape: RoundedRectangleBorder(
@@ -209,24 +215,24 @@ class FuelManagerApp extends StatelessWidget {
                 ),
       
                 // Cor do rótulo (texto)
-                labelStyle: TextStyle(color: Colors.grey.shade800),
+                labelStyle: TextStyle(color: AppColors.chipLabel),
       
                 // Cor do background quando o chip está SELECIONADO (a mais importante)
-                selectedColor: Colors.blueGrey.shade200,
+                selectedColor: AppColors.chipSelected,
       
                 // Cor do checkmark ou do ícone/texto quando SELECIONADO
-                checkmarkColor: Colors.blue.shade900,
+                checkmarkColor: AppColors.chipCheckmark,
       
                 // Cor do rótulo quando SELECIONADO
-                secondaryLabelStyle: const TextStyle(color: Colors.black),
+                secondaryLabelStyle: const TextStyle(color: AppColors.textPrimary),
       
                 // Cor do ícone quando selecionado
-                secondarySelectedColor: Colors.blue.shade900,
+                secondarySelectedColor: AppColors.chipCheckmark,
               ),
               textButtonTheme: TextButtonThemeData(
                 style: TextButton.styleFrom(
                   // Cor do texto/ícone (já deve ser azul)
-                  foregroundColor: Colors.blueGrey,
+                  foregroundColor: AppColors.primary,
       
                   // Cor do splash/overlay quando o usuário toca (EFEITO)
                 ),
@@ -234,10 +240,10 @@ class FuelManagerApp extends StatelessWidget {
               elevatedButtonTheme: ElevatedButtonThemeData(
                 style: ElevatedButton.styleFrom(
                   // Cor de fundo padrão: Usa a cor primária do tema (Azul)
-                  backgroundColor: Colors.blueGrey,
+                  backgroundColor: AppColors.primary,
       
                   // Cor do texto/ícone: Contraste branco
-                  foregroundColor: Colors.white,
+                  foregroundColor: AppColors.textOnPrimary,
       
                   padding: const EdgeInsets.symmetric(
                     horizontal: 24,
@@ -248,10 +254,10 @@ class FuelManagerApp extends StatelessWidget {
       
               floatingActionButtonTheme: const FloatingActionButtonThemeData(
                 // Cor de fundo do botão
-                backgroundColor: Colors.blueGrey,
+                backgroundColor: AppColors.primary,
       
                 // Cor dos ícones e texto (deve ser contrastante)
-                foregroundColor: Colors.white,
+                foregroundColor: AppColors.textOnPrimary,
       
                 // Elevação do botão (sombra)
                 elevation: 4,
@@ -259,17 +265,17 @@ class FuelManagerApp extends StatelessWidget {
       
               sliderTheme: SliderThemeData(
                 // Cor do 'thumb' (o controle redondo)
-                thumbColor: Colors.blueGrey,
+                thumbColor: AppColors.primary,
       
                 // Cor da linha ativa (a parte entre o início e o thumb)
-                activeTrackColor: Colors.blueGrey,
+                activeTrackColor: AppColors.primary,
       
                 // Cor da linha inativa (a parte entre o thumb e o final)
-                inactiveTrackColor: Colors.blueGrey.shade300,
+                inactiveTrackColor: AppColors.sliderInactiveTrack,
       
                 // Cor do texto do 'label' (o valor que aparece quando arrasta, se habilitado)
-                valueIndicatorColor: Colors.blueGrey.shade700,
-                valueIndicatorTextStyle: const TextStyle(color: Colors.white),
+                valueIndicatorColor: AppColors.sliderValueIndicator,
+                valueIndicatorTextStyle: const TextStyle(color: AppColors.textOnPrimary),
               ),
               inputDecorationTheme: InputDecorationTheme(
                 // 1. Define a borda padrão como OutlineInputBorder
@@ -282,7 +288,7 @@ class FuelManagerApp extends StatelessWidget {
                 // 2. Define a borda quando o campo está habilitado (sem foco)
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.0),
-                  borderSide: BorderSide(color: Colors.grey.shade400, width: 1.0),
+                  borderSide: BorderSide(color: AppColors.inputBorder, width: 1.0),
                 ),
       
                 // 3. Define a borda quando o campo está focado (digitando)
@@ -301,15 +307,48 @@ class FuelManagerApp extends StatelessWidget {
                 ),
       
                 // 5. Ajuste para o texto do label (opcional)
-                labelStyle: TextStyle(color: Colors.grey.shade700),
+                labelStyle: TextStyle(color: AppColors.inputLabel),
               ),
               // ----------------------------------------------------
             ),
+            darkTheme: ThemeData(
+              brightness: Brightness.dark,
+              primarySwatch: AppColors.primarySwatch,
+              primaryColor: AppColors.primary,
+              scaffoldBackgroundColor: AppColors.backgroundDark,
+              colorScheme: ColorScheme.dark(
+                primary: AppColors.primary,
+                secondary: AppColors.info,
+                surface: AppColors.surfaceDark,
+                background: AppColors.backgroundDark,
+                onPrimary: AppColors.textOnPrimary,
+                onSecondary: AppColors.textPrimaryDark,
+                onSurface: AppColors.textPrimaryDark,
+              ),
+              textTheme: ThemeData.dark().textTheme.apply(
+                    bodyColor: AppColors.textPrimaryDark,
+                    displayColor: AppColors.textPrimaryDark,
+                  ),
+              chipTheme: ThemeData.dark().chipTheme.copyWith(
+                    backgroundColor: AppColors.surfaceDark,
+                    selectedColor: AppColors.primary,
+                    labelStyle: const TextStyle(color: AppColors.textPrimaryDark),
+                    secondaryLabelStyle:
+                        const TextStyle(color: AppColors.textPrimaryDark),
+                  ),
+              floatingActionButtonTheme: const FloatingActionButtonThemeData(
+                backgroundColor: AppColors.primary,
+                foregroundColor: AppColors.textOnPrimary,
+              ),
+            ),
+            themeMode: themeController.themeMode,
             home: Builder(
               builder: (newContext) {
                 return MainLoaderScreen(configRepo: newContext.read(), veiculoRepo: newContext.read());
               }
             ),
+          );
+            },
           ),
         ),
       ),

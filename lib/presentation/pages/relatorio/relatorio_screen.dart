@@ -1,6 +1,7 @@
 // lib/screens/relatorio_screen.dart
 
 import 'package:flutter/material.dart';
+import 'package:car_costs/core/app_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import '../../../data/models/veiculo/veiculo.dart';
@@ -178,7 +179,7 @@ class _RelatorioScreenState extends State<RelatorioScreen> {
       children: [
         // Resumo de Totais
         Card(
-          color: Colors.blue.shade50,
+          color: AppColors.reportCardBackgroundFromTheme(context),
           margin: const EdgeInsets.all(8.0),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -187,18 +188,18 @@ class _RelatorioScreenState extends State<RelatorioScreen> {
                 _buildTotalRow(
                   'Total Abastecimento:',
                   state.totalAbastecimento,
-                  Colors.blue,
+                  AppColors.infoFromTheme(context),
                 ),
                 _buildTotalRow(
                   'Total Manutenção:',
                   state.totalManutencao,
-                  Colors.indigo,
+                  AppColors.maintenanceFromTheme(context),
                 ),
                 const Divider(thickness: 2),
                 _buildTotalRow(
                   'TOTAL GERAL:',
                   state.totalGeral,
-                  Colors.red,
+                  AppColors.black,
                   isBold: true,
                 ),
               ],
@@ -230,8 +231,8 @@ class _RelatorioScreenState extends State<RelatorioScreen> {
                       ? Icons.local_gas_station
                       : Icons.build,
                   color: gasto.tipo == 'Abastecimento'
-                      ? Colors.blue
-                      : Colors.indigo,
+                      ? AppColors.infoFromTheme(context)
+                      : AppColors.maintenanceFromTheme(context),
                 ),
                 title: Text(gasto.descricao),
                 subtitle: Text(
@@ -242,8 +243,8 @@ class _RelatorioScreenState extends State<RelatorioScreen> {
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     color: gasto.tipo == 'Abastecimento'
-                        ? Colors.blue
-                        : Colors.indigo,
+                        ? AppColors.infoFromTheme(context)
+                        : AppColors.maintenanceFromTheme(context),
                   ),
                 ),
               );
@@ -266,7 +267,7 @@ class _RelatorioScreenState extends State<RelatorioScreen> {
     final style = TextStyle(
       fontSize: isBold ? 18 : 16,
       fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-      color: isBold ? Colors.black : color,
+      color: color,
     );
 
     return Padding(

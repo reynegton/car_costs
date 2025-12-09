@@ -2,6 +2,7 @@
 
 import 'package:car_costs/domain/repositories/configuracao/configuracao_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:car_costs/core/app_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../blocs/veiculo/veiculo_bloc.dart';
 import '../../blocs/veiculo/veiculo_event.dart';
@@ -111,7 +112,7 @@ class VeiculoListScreen extends StatelessWidget {
           children: [
             // 1. Ícone para EDIÇÃO
             IconButton(
-              icon: const Icon(Icons.edit, color: Colors.blueGrey),
+              icon: const Icon(Icons.edit, color: AppColors.primary),
               tooltip: 'Editar Veículo',
               onPressed: () {
                 // Navega para a tela de formulário para EDIÇÃO
@@ -124,7 +125,7 @@ class VeiculoListScreen extends StatelessWidget {
             ),
             // 2. Ícone para DELETAR
             IconButton(
-              icon: const Icon(Icons.delete, color: Colors.red),
+              icon: const Icon(Icons.delete, color: AppColors.delete),
               tooltip: 'Deletar Veículo',
               onPressed: () => _confirmDelete(context, veiculo),
             ),
@@ -170,7 +171,7 @@ class VeiculoListScreen extends StatelessWidget {
               context.read<VeiculoBloc>().add(DeleteVeiculo(veiculo.id!));
               Navigator.of(ctx).pop();
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.delete),
             child: const Text('Deletar'),
           ),
         ],

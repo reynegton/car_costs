@@ -2,6 +2,7 @@
 
 import 'package:car_costs/presentation/pages/manutencao/manutencao_form_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:car_costs/core/app_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import '../../../data/models/veiculo/veiculo.dart';
@@ -56,7 +57,7 @@ class ManutencaoScreen extends StatelessWidget {
               return Card(
                 margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 child: ListTile(
-                  leading: const Icon(Icons.build_circle, color: Colors.indigo),
+                  leading: Icon(Icons.build_circle, color: AppColors.maintenanceFromTheme(context)),
                   title: Text(m.descricao),
                   subtitle: Text(
                     '$date | Valor: R\$ ${m.valor.toStringAsFixed(2)}',
@@ -69,7 +70,7 @@ class ManutencaoScreen extends StatelessWidget {
                         icon: const Icon(
                           Icons.edit,
                           size: 20,
-                          color: Colors.blue,
+                          color: AppColors.primaryVariant,
                         ),
                         onPressed: () {
                           Navigator.of(context).push(
@@ -89,7 +90,7 @@ class ManutencaoScreen extends StatelessWidget {
                         icon: const Icon(
                           Icons.delete,
                           size: 20,
-                          color: Colors.red,
+                          color: AppColors.delete,
                         ),
                         onPressed: () => _confirmDeleteManutencao(
                           context,
@@ -134,7 +135,7 @@ class ManutencaoScreen extends StatelessWidget {
               );
               Navigator.of(ctx).pop();
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.delete),
             child: const Text('Deletar'),
           ),
         ],
