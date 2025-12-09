@@ -2,14 +2,10 @@
 
 import 'package:car_costs/core/currency_input_format.dart';
 import 'package:car_costs/core/app_colors.dart';
-import 'package:car_costs/domain/repositories/configuracao/configuracao_repository.dart';
-import 'package:car_costs/presentation/pages/configuracao/configuracao_dialog.dart';
 import 'package:car_costs/presentation/pages/relatorio/relatorio_screen.dart';
-import 'package:car_costs/presentation/pages/veiculo/veiculo_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:car_costs/core/theme_controller.dart';
-import 'package:intl/intl.dart';
 import '../../../data/models/veiculo/veiculo.dart';
 import '../../blocs/veiculo/veiculo_bloc.dart';
 import '../../blocs/veiculo/veiculo_state.dart';
@@ -20,6 +16,9 @@ import '../../blocs/abastecimento/abastecimento_state.dart';
 import '../abastecimento/abastecimento_form_screen.dart';
 import '../manutencao/manutencao_screen.dart';
 import '../manutencao/manutencao_form_screen.dart'; // Necessário para o FAB da aba Manutenções
+import 'widgets/veiculo_detail_drawer_widgets.dart';
+import 'widgets/veiculo_detail_dashboard_widgets.dart';
+import 'widgets/veiculo_detail_abastecimento_widgets.dart';
 
 // 1. CONVERTIDO PARA STATEFUL WIDGET PARA RASTREAR A ABA
 class VeiculoDetailScreen extends StatefulWidget {
@@ -188,140 +187,27 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
           }
 
           final currentVeiculo = _getCurrentVeiculo(context);
-
           final themeController = context.watch<ThemeController>();
           final currentMode = themeController.themeMode;
 
           return Column(
             children: [
-              UserAccountsDrawerHeader(
-                accountName: Text(currentVeiculo.nome),
-                accountEmail: Text(
-                  '${currentVeiculo.marca} | KM: ${currentVeiculo.kmAtual}',
-                ),
-                currentAccountPicture: const Icon(
-                  Icons.directions_car,
-                  size: 48,
-                  color: AppColors.white,
-                ),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor,
-                ),
-              ),
+              buildDrawerHeader(context, currentVeiculo),
               Expanded(
-                child: ListView(
-                  children: allVeiculos.map((v) {
-                    return ListTile(
-                      leading: v.id == currentVeiculo.id
-                          ? const Icon(Icons.check_circle, color: AppColors.success)
-                          : const Icon(Icons.directions_car),
-                      title: Text(v.nome),
-                      selected: v.id == currentVeiculo.id,
-                      onTap: () async {
-                        Navigator.of(context).pop(); // Fecha o Drawer
-
-                        if (v.id != currentVeiculo.id) {
-                          // 1. SALVAR NOVA PREFERÊNCIA
-                          final configRepo = context.read<ConfiguracaoRepository>();
-                          await configRepo.setVeiculoSelecionado(v.id!);
-
-                          if (context.mounted) {
-                            Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    VeiculoDetailScreen(veiculo: v),
-                              ),
-                            );
-                          }
-                        }
-                      },
-                    );
-                  }).toList(),
+                child: buildDrawerVeiculoList(
+                  context,
+                  allVeiculos,
+                  currentVeiculo,
                 ),
               ),
               const Divider(),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('Tema', style: TextStyle(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    Wrap(
-                      spacing: 8,
-                      children: [
-                        ChoiceChip(
-                          label: Text(
-                            'Sistema',
-                            style: TextStyle(
-                              color: currentMode == ThemeMode.system
-                                  ? AppColors.textOnPrimary
-                                  : AppColors.chipLabel,
-                            ),
-                          ),
-                          selected: currentMode == ThemeMode.system,
-                          selectedColor: AppColors.primary,
-                          backgroundColor: AppColors.chipBackground,
-                          showCheckmark: true,
-                          checkmarkColor: AppColors.textOnPrimary,
-                          onSelected: (_) =>
-                              themeController.setThemeMode(ThemeMode.system),
-                        ),
-                        ChoiceChip(
-                          label: Text(
-                            'Claro',
-                            style: TextStyle(
-                              color: currentMode == ThemeMode.light
-                                  ? AppColors.textOnPrimary
-                                  : AppColors.chipLabel,
-                            ),
-                          ),
-                          selected: currentMode == ThemeMode.light,
-                          selectedColor: AppColors.primary,
-                          backgroundColor: AppColors.chipBackground,
-                          showCheckmark: true,
-                          checkmarkColor: AppColors.textOnPrimary,
-                          onSelected: (_) =>
-                              themeController.setThemeMode(ThemeMode.light),
-                        ),
-                        ChoiceChip(
-                          label: Text(
-                            'Escuro',
-                            style: TextStyle(
-                              color: currentMode == ThemeMode.dark
-                                  ? AppColors.textOnPrimary
-                                  : AppColors.chipLabel,
-                            ),
-                          ),
-                          selected: currentMode == ThemeMode.dark,
-                          selectedColor: AppColors.primary,
-                          backgroundColor: AppColors.chipBackground,
-                          showCheckmark: true,
-                          checkmarkColor: AppColors.textOnPrimary,
-                          onSelected: (_) =>
-                              themeController.setThemeMode(ThemeMode.dark),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+              buildDrawerThemeSection(
+                context,
+                themeController,
+                currentMode,
               ),
               const Divider(),
-              ListTile(
-                leading: const Icon(Icons.list),
-                title: const Text('Gerenciar Veículos'),
-                onTap: () {
-                  Navigator.of(context).pop(); // Fecha o Drawer
-                  // Volta para a lista principal de cadastro/seleção
-                  Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                      builder: (context) => const VeiculoListScreen(),
-                    ),
-                    (Route<dynamic> route) =>
-                        false, // Remove todas as rotas anteriores
-                  );
-                },
-              ),
+              buildDrawerManageVeiculosTile(context),
             ],
           );
         },
@@ -387,7 +273,6 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
             nivelEstimadoLitros * currentVeiculo.mediaManual;
         double autonomiaLongoPrazo =
             nivelEstimadoLitros * currentVeiculo.mediaLongPrazo;
-        // ----------------------------------
 
         double nivelPercentual =
             nivelEstimadoLitros / currentVeiculo.capacidadeTanqueLitros;
@@ -409,198 +294,54 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
                 ),
                 const Divider(),
 
-                // KM ATUAL
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.speed, color: AppColors.infoFromTheme(context)),
-                        const SizedBox(width: 8),
-                        Text(
-                          'KM Atual: ${currentVeiculo.kmAtual} km',
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                    IconButton(
-                      icon: const Icon(
-                        Icons.edit,
-                        size: 20,
-                        color: AppColors.greyDark,
-                      ),
-                      tooltip: 'Ajustar KM/Nível',
-                      onPressed: () =>
-                          _showKmEditDialog(context, currentVeiculo),
-                    ),
-                  ],
+                buildKmAtualRow(
+                  context,
+                  currentVeiculo,
+                  () => _showKmEditDialog(context, currentVeiculo),
                 ),
                 const SizedBox(height: 10),
 
-                // MÉDIA DE CONSUMO (ULTIMA MÉDIA)
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.trending_up, color: AppColors.successFromTheme(context)),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Última Média: ${currentVeiculo.mediaManual.toStringAsFixed(2)} km/l',
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                    // NOVO: AUTONOMIA COM ÚLTIMA MÉDIA
-                    Text(
-                      'Autonomia: ${autonomiaUltimaMedia.toStringAsFixed(0)} km',
-                      style: TextStyle(fontSize: 16, color: AppColors.successFromTheme(context)),
-                    ),
-                  ],
+                buildMediaSection(
+                  context,
+                  currentVeiculo,
+                  autonomiaUltimaMedia,
                 ),
                 const SizedBox(height: 10), // Espaçamento extra
-                // MÉDIA DE LONGO PRAZO E BOTÃO DE CONFIG
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.show_chart, color: AppColors.purpleFromTheme(context)),
-                            const SizedBox(width: 8),
-                            Text(
-                              'Média Longo Prazo: ${currentVeiculo.mediaLongPrazo.toStringAsFixed(2)} km/l',
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                        IconButton(
-                          icon: Icon(
-                            Icons.settings,
-                            size: 20,
-                            color: AppColors.purpleFromTheme(context),
-                          ),
-                          tooltip: 'Configurar Média Longo Prazo (N)',
-                          onPressed: () async {
-                            await showDialog(
-                              context: context,
-                              builder: (ctx) => const ConfiguracaoDialog(),
-                            );
-                            if (context.mounted) {
-                              context.read<AbastecimentoBloc>().add(
-                                LoadAbastecimentos(currentVeiculo.id!),
-                              );
-                            }
-                          },
-                        ),
-                      ],
-                    ),
-                    // NOVO: AUTONOMIA COM MÉDIA LONGO PRAZO
-                    Text(
-                      'Autonomia: ${autonomiaLongoPrazo.toStringAsFixed(0)} km',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: AppColors.purpleFromTheme(context),
-                      ),
-                    ),
 
-                    // BOTÃO DE CONFIGURAÇÃO (existente)
-                  ],
+                buildMediaLongoPrazoSection(
+                  context,
+                  currentVeiculo,
+                  autonomiaLongoPrazo,
                 ),
 
-                // MARCADOR DE COMBUSTÍVEL ESTIMADO
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Nível Estimado: ${(nivelPercentual * 100).toStringAsFixed(0)}% (${nivelEstimadoLitros.toStringAsFixed(1)} L)',
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    // BOTÃO DE CALIBRAÇÃO
-                    IconButton(
-                      icon: Icon(
-                        Icons.tune,
-                        size: 20,
-                        color: AppColors.warningFromTheme(context),
-                      ),
-                      tooltip: 'Calibrar Nível Manualmente',
-                      onPressed: () => _showNivelEditDialog(
-                        context,
-                        currentVeiculo,
-                        nivelEstimadoLitros,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 5),
-                // ----------------------------------------------------
-                // NOVO: MEDIDOR DE PROGRESSO COM MARCADORES VISUAIS
-                // ----------------------------------------------------
-                SizedBox(
-                  height: 20, // Altura para o indicador e os marcadores
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      // 1. O PRÓPRIO INDICADOR DE PROGRESSO
-                      LinearProgressIndicator(
-                        value: nivelPercentual,
-                        backgroundColor: AppColors.progressBackground,
-                        color: nivelPercentual > 0.2
-                            ? AppColors.successFromTheme(context)
-                            : AppColors.delete,
-                        minHeight: 10,
-                      ),
-
-                      // 2. LINHA DE MARCADORES (Ticks)
-                      LayoutBuilder(
-                        builder: (context, constraints) {
-                          // Calcula a largura total do indicador para posicionar os marcadores
-                          final totalWidth = constraints.maxWidth;
-                          
-                          // Cria os marcadores de 1/4, 1/2, e 3/4
-                          return Row(
-                            children: [
-                              // Marcador de 1/4 (25% da largura)
-                              SizedBox(width: totalWidth * 0.25 - 1.5), 
-                              Container(width: 3, height: 10, color: AppColors.fuelGaugeTick),
-                              
-                              // Marcador de 1/2 (25% restante)
-                              SizedBox(width: totalWidth * 0.25 - 3),
-                              Container(width: 3, height: 10, color: AppColors.fuelGaugeTick),
-                              
-                              // Marcador de 3/4 (25% restante)
-                              SizedBox(width: totalWidth * 0.25 - 3),
-                              Container(width: 3, height: 10, color: AppColors.fuelGaugeTick),
-                              
-                              // O último SizedBox (25% restante) leva ao final (100%)
-                            ],
-                          );
-                        },
-                      ),
-                    ],
+                buildNivelSection(
+                  context,
+                  currentVeiculo,
+                  nivelEstimadoLitros,
+                  nivelPercentual,
+                  () => _showNivelEditDialog(
+                    context,
+                    currentVeiculo,
+                    nivelEstimadoLitros,
                   ),
                 ),
+                const SizedBox(height: 5),
+
+                buildNivelProgressBar(context, nivelPercentual),
                 // Rótulos na Base (Opcional, mas altamente recomendado para clareza)
                 const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     SizedBox(width: 0), // Posição 0%
-                    Text('1/4', style: TextStyle(fontSize: 10, color: AppColors.greyDark)),
-                    Text('1/2', style: TextStyle(fontSize: 10, color: AppColors.greyDark)),
-                    Text('3/4', style: TextStyle(fontSize: 10, color: AppColors.greyDark)),
+                    Text('1/4',
+                        style: TextStyle(
+                            fontSize: 10, color: AppColors.greyDark)),
+                    Text('1/2',
+                        style: TextStyle(
+                            fontSize: 10, color: AppColors.greyDark)),
+                    Text('3/4',
+                        style: TextStyle(
+                            fontSize: 10, color: AppColors.greyDark)),
                     SizedBox(width: 0), // Posição 100%
                   ],
                 ),
@@ -634,71 +375,16 @@ class _VeiculoDetailScreenState extends State<VeiculoDetailScreen>
         }
 
         if (state is AbastecimentoLoaded) {
-          if (state.abastecimentos.isEmpty) {
-            return const Center(
-              child: Padding(
-                padding: EdgeInsets.all(20.0),
-                child: Text('Nenhum abastecimento registrado.'),
-              ),
-            );
-          }
-          return ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: state.abastecimentos.length,
-            itemBuilder: (context, index) {
-              final a = state.abastecimentos[index];
-              final date = DateFormat(
-                'dd/MM/yy',
-              ).format(DateTime.parse(a.data));
-
-              return ListTile(
-                leading: Icon(
-                  a.tanqueCheio ? Icons.local_gas_station : Icons.local_parking,
-                  color: a.tanqueCheio
-                      ? AppColors.infoFromTheme(context)
-                      : AppColors.grey,
-                ),
-                title: Text(
-                  '$date - ${a.tipoCombustivel} (${a.litrosAbastecidos.toStringAsFixed(2)} L)',
-                ),
-                subtitle: Text(
-                  'KM ${a.kmAtual} | Total: R\$ ${a.valorTotal.toStringAsFixed(2)}',
-                ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Exibição da Média (Existente)
-                    Text(
-                      a.mediaCalculada != null
-                          ? 'Média: ${a.mediaCalculada!.toStringAsFixed(2)} km/l'
-                          : '',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: a.mediaCalculada != null
-                            ? AppColors.successFromTheme(context)
-                            : AppColors.warningFromTheme(context),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    // BOTÃO DE REMOÇÃO (NOVO)
-                    IconButton(
-                      icon: const Icon(
-                        Icons.delete,
-                        size: 20,
-                        color: AppColors.delete,
-                      ),
-                      onPressed: () => _confirmDeleteAbastecimento(
-                        context,
-                        a.id!,
-                        veiculoId,
-                      ),
-                    ),
-                  ],
-                ),
-                // REMOVIDO: onLongPress: () => _confirmDeleteAbastecimento(context, a.id!, veiculoId),
-              );
-            },
+          return buildAbastecimentoLoadedBody(
+            context,
+            state,
+            veiculoId,
+            (abastecimentoId, selectedVeiculoId) =>
+                _confirmDeleteAbastecimento(
+              context,
+              abastecimentoId,
+              selectedVeiculoId,
+            ),
           );
         }
         return Container();
