@@ -50,8 +50,7 @@ class ThemeController extends ChangeNotifier {
       case ThemeMode.dark:
         value = 'dark';
         break;
-      case ThemeMode.system:
-      default:
+      case ThemeMode.system:      
         value = 'system';
         break;
     }
